@@ -1018,7 +1018,7 @@ const products = [
     { id: 'mj4', name: 'CIERGE IMMACULE CONCEPTION  ', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj5', name: 'SAINT JOSEPH', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj6', name: 'Saint Anne ', price: 185.00, category: 'maji', image: 'Saintanne.PNG' },
-    { id: 'mj7', name: 'NOTRE DAME DU PERPETUEL SECOURS ', price: 370.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
+    { id: 'mj7', name: 'NOTRE DAME DU PERPETUEL SECOURS ', price: 370.00, category: 'maji', image: 'notredamealtaga.PNG' },
     { id: 'mj8', name: 'Saint Anne ', price: 370.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj9', name: 'CIERGE SENORA PERPETUO ', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },  
     { id: 'mj10', name: 'PRAIUSI SUPER DELUXE ', price: 40.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
