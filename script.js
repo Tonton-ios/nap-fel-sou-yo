@@ -1027,7 +1027,7 @@ const products = [
     { id: 'mj15', name: 'MAGIC LIGHT (ROUGE) 100 g ', price: 135.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj16', name: 'MAGIC LIGHT (EMERGENCY 4C) 248g ', price: 180.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj17', name: 'MAGIC LIGHT (EMERGENCY 12C) 192 g ', price: 180.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
-    { id: 'mj18', name: 'SACRE COEUR DE JESUS', price: 365.00, category: 'maji', image: 'SAKREKÈJEZI' },
+    { id: 'mj18', name: 'SACRE COEUR DE JESUS', price: 365.00, category: 'maji', image: 'SAKREKÈJEZI.jpeg' },
     
 
 
