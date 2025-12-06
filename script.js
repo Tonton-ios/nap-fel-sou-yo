@@ -1014,7 +1014,7 @@ const products = [
    //Maji
     { id: 'mj1', name: 'Saint Antoine De Pardoue', price: 185.00, category: 'maji', image: 'saintantoinedepadoue.PNG' },
     { id: 'mj2', name: 'Cierge Saint Benoit ', price: 370.00, category: 'maji', image: 'saintbeoit.PNG' },
-    { id: 'mj3', name: 'Cierge Saint Michel Archange', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
+    { id: 'mj3', name: 'Cierge Saint Michel Archange', price: 185.00, category: 'maji', image: 'saintmichel.JPG' },
     { id: 'mj4', name: 'CIERGE IMMACULE CONCEPTION  ', price: 185.00, category: 'maji', image: 'imakileconception.PNG' },
     { id: 'mj5', name: 'SAINT JOSEPH', price: 185.00, category: 'maji', image: 'saintjozef.PNG' },
     { id: 'mj6', name: 'Saint Anne ', price: 185.00, category: 'maji', image: 'Saintanne.PNG' },
