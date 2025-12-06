@@ -1012,7 +1012,7 @@ const products = [
     { id: 'n6', name: 'SAC VIN GRIS', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
 
    //Maji
-    { id: 'mj1', name: 'Saint Antoine De Pardoue', price: 185.00, category: 'maji', image: 'saintantoinedepadoue' },
+    { id: 'mj1', name: 'Saint Antoine De Pardoue', price: 185.00, category: 'maji', image: 'saintantoinedepadoue.PNG' },
     { id: 'mj2', name: 'Cierge Saint Benoit ', price: 370.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj3', name: 'Cierge Saint Michel Archange', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj4', name: 'CIERGE IMMACULE CONCEPTION  ', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
