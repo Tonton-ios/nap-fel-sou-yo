@@ -25,6 +25,7 @@ const categories = [
 
 // Products Data
 const products = [
+    
     // Parfums 
     { id: 'f1', name: 'Cool Girl', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400' },
     { id: 'f2', name: 'love', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400' },
@@ -522,7 +523,7 @@ const products = [
     { id: 'p476', name: 'Wings Dinde', price: 250, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p477', name: 'Cuisse Poule', price: 500, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
 
-        // Cosmétiques
+    // Cosmétiques
     { id: 'c1', name: 'JABON GERMICIDA #1', price: 100.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c2', name: 'GENIUS INTEMSE 100ML', price: 800.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c3', name: 'RYAN BLAKE 176 59ML', price: 540.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
@@ -881,7 +882,7 @@ const products = [
     { id: 'c356', name: 'XTREME REAL + 24 H 35.27 OZ', price: 1135.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c357', name: 'SUPER WET MAXIMUM H 35.3 OZ', price: 810.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
 
- //Insecticides 
+    //Insecticides 
      { id: 'i1', name: 'Dragon(Rouge)', price: '100', category: 'insecticides', image: 'https://source.unsplash.com/600x600/?deodorant' },
      { id: 'i2', name: 'ARROM', price: '120', category: 'insecticides', image: 'https://source.unsplash.com/600x600/?deodorant' },
      { id: 'i3', name: 'DRAGON MOSQUITO', price: '110', category: 'insecticides', image: 'https://source.unsplash.com/600x600/?deodorant' },
@@ -889,7 +890,8 @@ const products = [
      { id: 'i5', name: 'BAYGON AEROSOL MOY 400ML', price: '610', category: 'insecticides', image: 'https://source.unsplash.com/600x600/?deodorant' },
      { id: 'i6', name: 'Dragon', price: '100', category: 'insecticides', image: 'https://source.unsplash.com/600x600/?deodorant' },
      { id: 'i7', name: 'BAYGON AEROSOL 285ML', price: '500', category: 'insecticides', image: 'https://source.unsplash.com/600x600/?deodorant' },
- // Hygiène
+
+     // Hygiène
     { id: 'h2', name: 'ROYAL SISTER 240 mm', price: 130, category: 'hygiene', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400' },
     { id: 'h3', name: 'ACTIMED (SERVIETTES COTON)', price: 125, category: 'hygiene', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400' },
     { id: 'h4', name: 'CAMEO (SUPER SOFT) 11 cm', price: 75, category: 'hygiene', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400' },
@@ -925,7 +927,8 @@ const products = [
     { id: 'h34', name: 'Balsamine cherry 1 gallon', price: 500, category: 'hygiene', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400' },
     { id: 'h35', name: 'ACTIMED(BEBE DOUCEUR COTON L 32 9-14 KG', price: 1000, category: 'hygiene', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400' },
     { id: 'h36', name: 'KOTEX ACTIMED MAXI LONGUES', price: 125, category: 'hygiene', image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400' },
-     // Bijoux
+   
+    // Bijoux
     { id: 'b1', name: 'Jeu De Chaine ', price: 250.00, category: 'bijoux', image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400' },
     { id: 'b2', name: 'CHAINE STAINLESS ASSORTI ', price: 400.00, category: 'bijoux', image: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f0e?w=400' },
     { id: 'b3', name: 'CHAINE STAINLESS ASSORTI', price: 750.00, category: 'bijoux', image: 'Pr_cos/florida.JPg'},
@@ -938,7 +941,7 @@ const products = [
     { id: 'b10', name: 'Montre femme ', price: 1000.00, category: 'bijoux', image: 'Pr_cos/florida.JPg'},
     { id: 'b11', name: 'Montre Stainless femme ', price: 1750.00, category: 'bijoux', image: 'Pr_cos/florida.JPg'},
 
- // Produits ménagers
+    // Produits ménagers
     { id: 'm1', name: 'PAPIA TOWEL PAPER', price: 310.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
     { id: 'm2', name: 'ANA PAPIER', price: 50.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
     { id: 'm3', name: 'SORBETES', price: 250.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
@@ -990,15 +993,23 @@ const products = [
     { id: 'm49', name: 'GOBLETS DEKA 50*5', price: 135.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
     { id: 'm50', name: 'ALUMINIUM FOIL', price: 210.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
     { id: 'm51', name: 'TOWEL PAPIA', price: 310.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
-    
-
-   //Tabac,Cigares,Chicha 
+   
+    //Tabac,Cigares,Chicha 
     { id: 't1', name: 'HENRY CHRISTOPHE CIGAR', price: 2000.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
     { id: 't2', name: 'OGOU CIGARE', price: 2000.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
     { id: 't3', name: 'PAPA DOC CIGAR', price: 2000.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
     { id: 't4', name: 'CIGA AL FAKHER ', price: 345.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
     
-
+    //Cartes de vœux
+    { id: 'v1', name: 'CARTES CADEAUX ASSORTIS ', price: 200.00, category: 'cartes', image: 'https://via.placeholder.com/400' },
+ 
+    //Paniers cadeaux
+    { id: 'n1', name: 'Valise Cadeau Petit', price: 120.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n2', name: 'Valise Cadeau Gros', price: 310.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n3', name: 'Valise Cadeau Moyen', price: 170.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n4', name: 'Valise Cadeau ', price: 210.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n5', name: 'SAC VIN ASSORTI', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n6', name: 'SAC VIN GRIS', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
 
 
 
