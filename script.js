@@ -1001,8 +1001,15 @@ const products = [
     { id: 't4', name: 'CIGA AL FAKHER ', price: 345.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
     
     //Cartes de vœux
-    { id: 'v1', name: 'CARTES CADEAUX ASSORTIS ', price: 200.00, category: 'Cartes de vœux', image: 'https://via.placeholder.com/400' },
-
+    { id: 'v1', name: 'CARTES CADEAUX ASSORTIS ', price: 200.00, category: 'cartes', image: 'https://via.placeholder.com/400' },
+ 
+    //Paniers cadeaux
+    { id: 'n1', name: 'Valise Cadeau Petit', price: 120.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n2', name: 'Valise Cadeau Gros', price: 310.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n3', name: 'Valise Cadeau Moyen', price: 170.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n4', name: 'Valise Cadeau ', price: 210.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n5', name: 'SAC VIN ASSORTI', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
+    { id: 'n6', name: 'SAC VIN GRIS', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
 
 
 
