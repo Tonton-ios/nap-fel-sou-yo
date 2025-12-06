@@ -25,10 +25,26 @@ const categories = [
 
 // Products Data
 const products = [
-    // Poissonnerie
-    { id: 'p1', name: 'Saumon frais', price: 2500, category: 'poissonnerie', image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400' },
-    { id: 'p2', name: 'Crevettes', price: 3000, category: 'poissonnerie', image: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400' },
-    { id: 'p3', name: 'Tilapia', price: 1500, category: 'poissonnerie', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    // Parfums 
+    { id: 'f1', name: 'Cool Girl', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400' },
+    { id: 'f2', name: 'love', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400' },
+    { id: 'f3', name: 'Shep', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f4', name: 'Play Red', price: 1000.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f5', name: 'Ana Ana', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f6', name: 'Play Blue ', price: 1000.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f7', name: 'Sexy Night', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f8', name: '777 Men', price: 1000.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f9', name: 'Rosa Melody Pink', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f10', name: '717 VIP Men', price: 1000.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f11', name: 'Rose Royale ', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f12', name: '777 VIP Men You Are Exalted ', price: 1000.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f13', name: 'Paris', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f14', name: 'SPRAY OUD FOR GLORY', price: 1050.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f15', name: 'SPRAY AMETHYST LATTAFA', price: 1050.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f16', name: 'SPRAY PRIVE ROSE ', price: 1050.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f17', name: 'SPRAY YARA LATTAFA', price: 1050.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f18', name: 'SPRAY HAYAATI FLORENCE ', price: 1050.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
+    { id: 'f19', name: 'SPRAY PRIDE OF LATTAFA ', price: 1050.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
     
     // Produits alimentaires
     { id: 'p4', name: 'Caisse Cornflakes', price: 3555, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
@@ -975,6 +991,17 @@ const products = [
     { id: 'm50', name: 'ALUMINIUM FOIL', price: 210.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
     { id: 'm51', name: 'TOWEL PAPIA', price: 310.00, category: 'menagers', image: 'https://via.placeholder.com/400' },
     
+
+   //Tabac,Cigares,Chicha 
+    { id: 't1', name: 'HENRY CHRISTOPHE CIGAR', price: 2000.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
+    { id: 't2', name: 'OGOU CIGARE', price: 2000.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
+    { id: 't3', name: 'PAPA DOC CIGAR', price: 2000.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
+    { id: 't4', name: 'CIGA AL FAKHER ', price: 345.00, category: 'tabac', image: 'https://via.placeholder.com/400' },
+    
+
+
+
+
 ];
 
 // Fix broken image URLs: replace source.unsplash.com with working Unsplash photo URLs
@@ -1177,7 +1204,7 @@ function renderProductsPage() {
                         <button class="filter-btn" data-category="bijoux">Bijoux</button>
                         <button class="filter-btn" data-category="cartes">Cartes de vœux</button>
                         <button class="filter-btn" data-category="paniers">Paniers cadeaux</button>
-                        <button class="filter-btn" data-category="tabac">Tabac</button>
+                        <button class="filter-btn" data-category="tabac">Tabac</button> 
                         <button class="filter-btn" data-category="insecticides">Insecticides</button>
                     </div>
                 </div>
