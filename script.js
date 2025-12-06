@@ -1237,7 +1237,7 @@ function renderProductsPage() {
                         <button class="filter-btn" data-category="parfums">Parfums</button>
                         <button class="filter-btn" data-category="hygiene">Hygiène</button>
                         <button class="filter-btn" data-category="maji">Maji</button>
-                        <button class="filter-btn" data-category="bebe">Produits bébé</button>
+                        
                         <button class="filter-btn" data-category="kits">Kits alimentaires</button>
                         <button class="filter-btn" data-category="alcools">Alcools</button>
                         <button class="filter-btn" data-category="bijoux">Bijoux</button>
