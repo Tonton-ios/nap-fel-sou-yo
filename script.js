@@ -18,7 +18,7 @@ const categories = [
     { id: 'alcools', name: 'Alcools', image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400' },
     { id: 'paniers', name: 'Paniers cadeaux', image: 'https://images.unsplash.com/photo-1558486012-817176f84c6d?w=400' },
     { id: 'tabac', name: 'Cigares / Cigarettes / Chicha', image: 'https://images.unsplash.com/photo-1594717527116-4b5b8c9a9146?w=400' },
-    { id: 'bebe', name: 'Produits bébé', image: 'https://images.unsplash.com/photo-1619045207244-5a4fdecc9616?w=400' },
+    //{ id: 'bebe', name: 'Produits bébé', image: 'https://images.unsplash.com/photo-1619045207244-5a4fdecc9616?w=400' },
     { id: 'insecticides', name: 'Insecticides', image: 'https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=400' },
     { id: 'kits', name: 'Kits alimentaires', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400' },
 ];
@@ -1237,7 +1237,6 @@ function renderProductsPage() {
                         <button class="filter-btn" data-category="parfums">Parfums</button>
                         <button class="filter-btn" data-category="hygiene">Hygiène</button>
                         <button class="filter-btn" data-category="maji">Maji</button>
-                        
                         <button class="filter-btn" data-category="kits">Kits alimentaires</button>
                         <button class="filter-btn" data-category="alcools">Alcools</button>
                         <button class="filter-btn" data-category="bijoux">Bijoux</button>
