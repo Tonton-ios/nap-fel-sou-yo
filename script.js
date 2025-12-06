@@ -4,7 +4,7 @@ let currentPage = 'home';
 
 // Categories Data
 const categories = [
-    { id: 'poissonnerie', name: 'Poissonnerie', image: 'https://images.unsplash.com/photo-1637679242615-0ddbbb34b7d7?w=400' },
+    //{ id: 'poissonnerie', name: 'Poissonnerie', image: 'https://images.unsplash.com/photo-1637679242615-0ddbbb34b7d7?w=400' },
     { id: 'glaces', name: 'Produits glacés', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400' },
     { id: 'alimentaires', name: 'Produits alimentaires', image: 'https://images.unsplash.com/photo-1714224247661-ee250f55a842?w=400' },
     { id: 'menagers', name: 'Produits ménagers', image: 'https://images.unsplash.com/photo-1758887262204-a49092d85f15?w=400' },
@@ -1228,7 +1228,6 @@ function renderProductsPage() {
                 <div class="filter-container">
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-category="all">Tous les produits</button>
-                        <button class="filter-btn" data-category="poissonnerie">Poissonnerie</button>
                         <button class="filter-btn" data-category="glaces">Produits glacés</button>
                         <button class="filter-btn" data-category="alimentaires">Produits alimentaires</button>
                         <button class="filter-btn" data-category="menagers">Produits ménagers</button>
