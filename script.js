@@ -1021,15 +1021,13 @@ const products = [
     { id: 'mj7', name: 'NOTRE DAME DU PERPETUEL SECOURS ', price: 370.00, category: 'maji', image: 'notredamealtaga.PNG' },
     { id: 'mj8', name: 'Saint Anne ', price: 370.00, category: 'maji', image: 'Saintanne.PNG' },
     { id: 'mj9', name: 'CIERGE SENORA PERPETUO ', price: 185.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },  
-    { id: 'mj10', name: 'PRAIUSI SUPER DELUXE ', price: 40.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
-    { id: 'mj11', name: 'BAIDER (MAX)', price: .0030, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj12', name: 'MAGIC LIGHT IMMACULEE CONCEPTION ', price: 500.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj13', name: 'MAGIC LIGHT (BLANC) 100 g ', price: 135.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj14', name: 'MAGIC LIGHT (BLEU) 100 g ', price: 135.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj15', name: 'MAGIC LIGHT (ROUGE) 100 g ', price: 135.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj16', name: 'MAGIC LIGHT (EMERGENCY 4C) 248g ', price: 180.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
     { id: 'mj17', name: 'MAGIC LIGHT (EMERGENCY 12C) 192 g ', price: 180.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
-    { id: 'mj18', name: 'SACRE COEUR DE JESUS', price: 365.00, category: 'maji', image: 'https://source.unsplash.com/600x600/?perfume' },
+    { id: 'mj18', name: 'SACRE COEUR DE JESUS', price: 365.00, category: 'maji', image: 'SAKREKÈJEZI' },
     
 
 
