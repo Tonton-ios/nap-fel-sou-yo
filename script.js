@@ -40,7 +40,7 @@ const products = [
     { id: 'f11', name: 'Rose Royale ', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
     { id: 'f12', name: '777 VIP Men You Are Exalted ', price: 1000.00, category: 'parfums', image: 'pafen_foto/777vipmen.jpg' },
     { id: 'f13', name: 'Paris', price: 750.00, category: 'parfums', image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=400' },
-    { id: 'f14', name: 'SPRAY OUD FOR GLORY', price: 1050.00, category: 'parfums', image: 'pafen_foto/lattafa oud for glory.jpg' },
+    { id: 'f14', name: 'SPRAY OUD FOR GLORY', price: 1050.00, category: 'parfums', image: 'pafen_foto/lattafaglory.jpg' },
     { id: 'f15', name: 'SPRAY AMETHYST LATTAFA', price: 1050.00, category: 'parfums', image: 'pafen_foto/latafaamethyst.jpg' },
     { id: 'f16', name: 'SPRAY PRIVE ROSE ', price: 1050.00, category: 'parfums', image: 'pafen_foto/priverose.jpg' },
     { id: 'f17', name: 'SPRAY YARA LATTAFA', price: 1050.00, category: 'parfums', image: 'pafen_foto/yaralattafa.jpg' },
