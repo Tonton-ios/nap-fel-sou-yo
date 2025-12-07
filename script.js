@@ -2315,6 +2315,7 @@ function completeOrder(paymentMethod) {
     message += `*TOTAL: ${getCartTotal()} GDS*\n`;
     message += `━━━━━━━━━━━━━━━━━━\n\n`;
     message += `*Veuillez envoyer la preuve de paiement pour confirmer votre commande*\n`;
+    message += `Veuillez, s'il vous plaît, nous transmettre votre localisation afin d'organiser la livraison.`;
     message += `Merci! 🙏`;
     
     window.open(`https://wa.me/50942936443?text=${encodeURIComponent(message)}`, '_blank');
