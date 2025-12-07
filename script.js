@@ -4,7 +4,7 @@ let currentPage = 'home';
 
 // Categories Data
 const categories = [
-    { id: 'poissonnerie', name: 'Poissonnerie', image: 'https://images.unsplash.com/photo-1637679242615-0ddbbb34b7d7?w=400' },
+    //{ id: 'poissonnerie', name: 'Poissonnerie', image: 'https://images.unsplash.com/photo-1637679242615-0ddbbb34b7d7?w=400' },
     { id: 'glaces', name: 'Produits glacés', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400' },
     { id: 'alimentaires', name: 'Produits alimentaires', image: 'https://images.unsplash.com/photo-1714224247661-ee250f55a842?w=400' },
     { id: 'menagers', name: 'Produits ménagers', image: 'https://images.unsplash.com/photo-1758887262204-a49092d85f15?w=400' },
@@ -18,7 +18,7 @@ const categories = [
     { id: 'alcools', name: 'Alcools', image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400' },
     { id: 'paniers', name: 'Paniers cadeaux', image: 'https://images.unsplash.com/photo-1558486012-817176f84c6d?w=400' },
     { id: 'tabac', name: 'Cigares / Cigarettes / Chicha', image: 'https://images.unsplash.com/photo-1594717527116-4b5b8c9a9146?w=400' },
-    { id: 'bebe', name: 'Produits bébé', image: 'https://images.unsplash.com/photo-1619045207244-5a4fdecc9616?w=400' },
+    //{ id: 'bebe', name: 'Produits bébé', image: 'https://images.unsplash.com/photo-1619045207244-5a4fdecc9616?w=400' },
     { id: 'insecticides', name: 'Insecticides', image: 'https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=400' },
     { id: 'kits', name: 'Kits alimentaires', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400' },
 ];
@@ -1093,6 +1093,25 @@ const products = [
     { id: 'n5', name: 'SAC VIN ASSORTI', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
     { id: 'n6', name: 'SAC VIN GRIS', price: 200.00, category: 'paniers', image: 'https://via.placeholder.com/400' },
 
+   //Maji
+    { id: 'mj1', name: 'Saint Antoine De Pardoue', price: 185.00, category: 'maji', image: 'saintantoinedepadoue.PNG' },
+    { id: 'mj2', name: 'Cierge Saint Benoit ', price: 370.00, category: 'maji', image: 'saintbeoit.PNG' },
+    { id: 'mj3', name: 'Cierge Saint Michel Archange', price: 185.00, category: 'maji', image: 'saintmichel.JPG' },
+    { id: 'mj4', name: 'CIERGE IMMACULE CONCEPTION  ', price: 185.00, category: 'maji', image: 'imakileconception.PNG' },
+    { id: 'mj5', name: 'SAINT JOSEPH', price: 185.00, category: 'maji', image: 'saintjozef.PNG' },
+    { id: 'mj6', name: 'Saint Anne ', price: 185.00, category: 'maji', image: 'Saintanne.PNG' },
+    { id: 'mj7', name: 'NOTRE DAME DU PERPETUEL SECOURS ', price: 370.00, category: 'maji', image: 'notredamealtaga.PNG' },
+    { id: 'mj8', name: 'Saint Anne ', price: 370.00, category: 'maji', image: 'Saintanne.PNG' },
+    { id: 'mj18', name: 'SACRE COEUR DE JESUS', price: 365.00, category: 'maji', image: 'SAKREKÈJEZI.jpeg' },
+    
+
+
+
+
+
+
+
+
 
 
 ];
@@ -1282,7 +1301,6 @@ function renderProductsPage() {
                 <div class="filter-container">
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-category="all">Tous les produits</button>
-                        <button class="filter-btn" data-category="poissonnerie">Poissonnerie</button>
                         <button class="filter-btn" data-category="glaces">Produits glacés</button>
                         <button class="filter-btn" data-category="alimentaires">Produits alimentaires</button>
                         <button class="filter-btn" data-category="menagers">Produits ménagers</button>
@@ -1291,7 +1309,6 @@ function renderProductsPage() {
                         <button class="filter-btn" data-category="parfums">Parfums</button>
                         <button class="filter-btn" data-category="hygiene">Hygiène</button>
                         <button class="filter-btn" data-category="maji">Maji</button>
-                        <button class="filter-btn" data-category="bebe">Produits bébé</button>
                         <button class="filter-btn" data-category="kits">Kits alimentaires</button>
                         <button class="filter-btn" data-category="alcools">Alcools</button>
                         <button class="filter-btn" data-category="bijoux">Bijoux</button>
