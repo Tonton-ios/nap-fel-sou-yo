@@ -2784,13 +2784,122 @@ function deleteProduct(productId) {
     navigateTo('admin');
 }
 
-// FONCTION: Modifier un produit (fonctionnalité en cours de développement)
+// FONCTION: Modifier un produit existant
 function editProduct(productId) {
     const product = products.find(p => p.id === productId);
-    if (product) {
-        alert('Fonctionnalité d\'édition en développement. Produit: ' + product.name);
-        // La modification complète sera implémentée dans la prochaine mise à jour
+    if (!product) return;
+
+    // Remplir le formulaire d'édition avec les données actuelles
+    editingProductId = productId;
+    document.getElementById('editProductName').value = product.name;
+    document.getElementById('editProductPrice').value = product.price;
+    document.getElementById('editProductCategory').value = product.category;
+    document.getElementById('editProductImage').value = product.image;
+    
+    // Afficher l'aperçu de l'image actuelle
+    const editPreviewImg = document.getElementById('editPreviewImg');
+    const editImagePreview = document.getElementById('editImagePreview');
+    if (editPreviewImg && editImagePreview) {
+        editPreviewImg.src = product.image;
+        editImagePreview.style.display = 'block';
     }
+
+    // Scroller vers le formulaire d'édition
+    const editForm = document.getElementById('adminTabEdit');
+    if (editForm) {
+        editForm.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// FONCTION: Sauvegarder les modifications du produit
+function saveProductEdit() {
+    if (!editingProductId) {
+        alert('Aucun produit sélectionné pour modification');
+        return;
+    }
+
+    const nameInput = document.getElementById('editProductName');
+    const priceInput = document.getElementById('editProductPrice');
+    const categoryInput = document.getElementById('editProductCategory');
+    const imageInput = document.getElementById('editProductImage');
+    const messageDiv = document.getElementById('editProductMessage');
+
+    if (!nameInput || !priceInput || !categoryInput || !messageDiv) {
+        return;
+    }
+
+    const name = nameInput.value.trim();
+    const price = parseFloat(priceInput.value);
+    const category = categoryInput.value;
+    const image = imageInput ? imageInput.value.trim() : '';
+
+    // Validation
+    if (!name || !price || !category) {
+        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    if (isNaN(price) || price < 0) {
+        messageDiv.textContent = '❌ Le prix doit être un nombre valide';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Trouver et mettre à jour le produit dans l'array
+    const productIndex = products.findIndex(p => p.id === editingProductId);
+    if (productIndex > -1) {
+        products[productIndex].name = name;
+        products[productIndex].price = price;
+        products[productIndex].category = category;
+        products[productIndex].image = image || 'https://via.placeholder.com/400';
+    }
+
+    // Mettre à jour dans le localStorage si c'est un produit personnalisé
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+    const customIndex = customProducts.findIndex(p => p.id === editingProductId);
+    if (customIndex > -1) {
+        customProducts[customIndex].name = name;
+        customProducts[customIndex].price = price;
+        customProducts[customIndex].category = category;
+        customProducts[customIndex].image = image || 'https://via.placeholder.com/400';
+        localStorage.setItem('customProducts', JSON.stringify(customProducts));
+    }
+
+    // Message de succès
+    messageDiv.textContent = '✅ Produit modifié avec succès!';
+    messageDiv.style.backgroundColor = '#efe';
+    messageDiv.style.color = '#060';
+    messageDiv.style.display = 'block';
+
+    // Réinitialiser le formulaire
+    editingProductId = null;
+    nameInput.value = '';
+    priceInput.value = '';
+    categoryInput.value = '';
+    if (imageInput) imageInput.value = '';
+    document.getElementById('editImagePreview').style.display = 'none';
+
+    // Masquer le message après 3 secondes et rafraîchir
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+        navigateTo('admin');
+    }, 3000);
+}
+
+// FONCTION: Annuler la modification
+function cancelEditProduct() {
+    editingProductId = null;
+    document.getElementById('editProductName').value = '';
+    document.getElementById('editProductPrice').value = '';
+    document.getElementById('editProductCategory').value = '';
+    document.getElementById('editProductImage').value = '';
+    document.getElementById('editImagePreview').style.display = 'none';
+    document.getElementById('adminTabEdit').style.display = 'none';
 }
 
 // FONCTION: Changer le mot de passe admin
