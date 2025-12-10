@@ -127,7 +127,7 @@ const products = [
     {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
     {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
     {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
-    {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
+    {id: 'a57', name:'JP CHENET ROSE', price: 1780, category: 'alcools', image:''},
     
     // Produits alimentaires
     //{ id: 'p4', name: 'Caisse Cornflakes', price: 3555, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
