@@ -2791,24 +2791,35 @@ function editProduct(productId) {
 
     // Remplir le formulaire d'édition avec les données actuelles
     editingProductId = productId;
-    document.getElementById('editProductName').value = product.name;
-    document.getElementById('editProductPrice').value = product.price;
-    document.getElementById('editProductCategory').value = product.category;
-    document.getElementById('editProductImage').value = product.image;
     
-    // Afficher l'aperçu de l'image actuelle
-    const editPreviewImg = document.getElementById('editPreviewImg');
-    const editImagePreview = document.getElementById('editImagePreview');
-    if (editPreviewImg && editImagePreview) {
-        editPreviewImg.src = product.image;
-        editImagePreview.style.display = 'block';
-    }
-
-    // Scroller vers le formulaire d'édition
-    const editForm = document.getElementById('adminTabEdit');
-    if (editForm) {
-        editForm.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Attendre que les éléments soient disponibles
+    setTimeout(() => {
+        const nameInput = document.getElementById('editProductName');
+        const priceInput = document.getElementById('editProductPrice');
+        const categoryInput = document.getElementById('editProductCategory');
+        const imageInput = document.getElementById('editProductImage');
+        const editPreviewImg = document.getElementById('editPreviewImg');
+        const editImagePreview = document.getElementById('editImagePreview');
+        
+        if (nameInput && priceInput && categoryInput && imageInput) {
+            nameInput.value = product.name;
+            priceInput.value = product.price;
+            categoryInput.value = product.category;
+            imageInput.value = product.image;
+            
+            // Afficher l'aperçu de l'image actuelle
+            if (editPreviewImg && editImagePreview) {
+                editPreviewImg.src = product.image;
+                editImagePreview.style.display = 'block';
+            }
+            
+            // Scroller vers le formulaire d'édition
+            const editForm = document.getElementById('adminTabEdit');
+            if (editForm) {
+                editForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }, 100);
 }
 
 // FONCTION: Sauvegarder les modifications du produit
@@ -2901,6 +2912,8 @@ function cancelEditProduct() {
     document.getElementById('editImagePreview').style.display = 'none';
     document.getElementById('adminTabEdit').style.display = 'none';
 }
+
+
 
 // FONCTION: Changer le mot de passe admin
 function changeAdminPassword() {
