@@ -108,7 +108,7 @@ const products = [
     {id: 'a56', name:'STOLI VODKAV 0,75L', price: 1750.00, category: 'alcools', image:''},
     {id: 'a57', name:'RESERVE 750ML', price: 700.00, category: 'alcools', image:''},
     {id: 'a57', name:'COLD PREMIUN WHISKY', price: 650.00, category: 'alcools', image:''},
-    {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
+    {id: 'a57', name:'JP CHENET ROSE', price: 2750, category: 'alcools', image:''},
     {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
     {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
     {id: 'a57', name:'JP CHENET ROSE', price: 1750, category: 'alcools', image:''},
