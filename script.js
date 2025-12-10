@@ -2614,7 +2614,7 @@ function renderProductsList(allProducts) {
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <button 
                             class="btn" 
-                            onclick="editProduct('${product.id}')"
+                            onclick="editProduct('${product.id}'); switchAdminTab('edit')"
                             style="padding: 0.5rem 1rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;"
                         >
                             Modifier
@@ -2789,7 +2789,7 @@ function editProduct(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    // Remplir le formulaire d'édition avec les données actuelles
+   // Remplir le formulaire d'édition avec les données actuelles
     editingProductId = productId;
     
     // Attendre que les éléments soient disponibles
@@ -2821,6 +2821,7 @@ function editProduct(productId) {
         }
     }, 100);
 }
+
 
 // FONCTION: Sauvegarder les modifications du produit
 function saveProductEdit() {
