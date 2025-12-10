@@ -2350,7 +2350,7 @@ function attachPaymentListeners() {
 // Cette section contient tout le système d'administration pour gérer les produits
 
 // Variables globales pour le système admin
-let adminPassword = localStorage.getItem('adminPassword') || 'admin123';
+let adminPassword = localStorage.getItem('adminPassword') || '123456';
 let isAdminLoggedIn = false;
 let editingProductId = null;
 
