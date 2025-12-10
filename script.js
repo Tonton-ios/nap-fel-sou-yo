@@ -54,10 +54,10 @@ const products = [
     {id: 'a2', name:'EL MAYU 750ML', price: 600.00, category: 'alcools', image:''},
     {id: 'a3', name:'RHUM BARBANCOURT 3*', price: 1750, category: 'alcools', image:''},
     {id: 'a4', name:'CAISE BECKS', price: 3750.00, category: 'alcools', image:''},
-    //{id: 'a5', name:'BLUE', price: 155.00, category: 'alcools', image:''},
+    {id: 'a5', name:'BLUE', price: 155.00, category: 'alcools', image:''},
     {id: 'a6', name:'JP CHENET ROSE', price: 1750.00, category: 'alcools', image:''},
     {id: 'a7', name:'MIKS PECHE 275ML', price: 200.00, category: 'alcools', image:''},
-    //{id: 'a8', name:'CREMAS', price: 0.00, category: 'alcools', image:''},
+    {id: 'a8', name:'CREMAS', price: 0.00, category: 'alcools', image:''},
     {id: 'a9', name:'JP CHENET BLANC', price: 1750.00, category: 'alcools', image:''},
     {id: 'a10', name:'MOYEN 8PM 180 ML', price: 200.00, category: 'alcools', image:''},
     {id: 'a11', name:'LAGOMAR VIN ROUGE', price: 550.00, category: 'alcools', image:''},
@@ -217,7 +217,7 @@ const products = [
     //{ id: 'p88', name: 'Elsa Muffin a la Bon', price: 400, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
    // { id: 'p89', name: 'Macera Fraise', price: 100, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
    // { id: 'p90', name: 'Gourmandises Pringless 37G', price: 270, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
-    //{ id: 'p91', name: 'Wafers Vanille', price: 120, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
+    { id: 'p91', name: 'Wafers Vanille', price: 120, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
     { id: 'p92', name: 'Doublemint', price: 75, category: 'alimentaires', image: 'alimen/doublemint.jpg' },
     { id: 'p93', name: 'Winterfresh', price: 75, category: 'alimentaires', image: 'alimen/winterfresh.jpg' },
     { id: 'p94', name: 'Wafers Fraise', price: 120, category: 'alimentaires', image: 'alimen/wafersvanilla.jpg' },
@@ -253,7 +253,7 @@ const products = [
    // { id: 'p124', name: 'Topsy 280g', price: 450, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p125', name: 'Nice 33g', price: 180, category: 'alimentaires', image: 'alimen/nice.jpg' },
     { id: 'p126', name: 'Chomp (Chocolate) 228g', price: 250, category: 'alimentaires', image: 'alimen/chompchocolat.jpg' },
-    //{ id: 'p127', name: 'Crakenas (Club) 192g', price: 125, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
+    { id: 'p127', name: 'Crakenas (Club) 192g', price: 125, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p128', name: 'Cream (Sandwich Cookies) 350g', price: 200, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p129', name: 'Bonbon Bum Strawberry', price: 400, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p130', name: 'Bonbon Bongu Cheese', price: 250, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
@@ -1246,6 +1246,10 @@ products.forEach(p => {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Load custom products from localStorage
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+    products.push(...customProducts);
+    
     updateCartCount();
     navigateTo('home');
 });
@@ -1283,6 +1287,9 @@ function navigateTo(page) {
         case 'cart':
             mainContent.innerHTML = renderCartPage();
             attachCartListeners();
+            break;
+        case 'admin':
+            mainContent.innerHTML = renderAdminDashboard();
             break;
     }
     
@@ -2338,6 +2345,7 @@ function attachPaymentListeners() {
     // Listeners are attached inline via onclick
 }
 
+
 // ========== SECTION ADMIN - DÉBUT ==========
 // Cette section contient tout le système d'administration pour gérer les produits
 
@@ -2834,4 +2842,4 @@ function logoutAdmin() {
 
 // ========== SECTION ADMIN - FIN ==========
 
-
+       
