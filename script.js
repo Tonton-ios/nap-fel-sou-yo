@@ -2392,7 +2392,7 @@ function renderAdminLoginPage() {
                     </button>
 
                     <p style="text-align: center; margin-top: 2rem; color: #999; font-size: 0.875rem;">
-                        <strong>Mot de passe par défaut:</strong> admin123
+                        <strong>Accès réservé à l'administrateur</strong> 
                     </p>
                 </div>
             </div>
