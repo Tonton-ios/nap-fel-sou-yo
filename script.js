@@ -2453,13 +2453,6 @@ function renderAdminDashboard() {
                     </button>
                     <button 
                         class="admin-tab-btn" 
-                        onclick="switchAdminTab('edit')"
-                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
-                    >
-                        Modifier un produit
-                    </button>
-                    <button 
-                        class="admin-tab-btn" 
                         onclick="switchAdminTab('settings')"
                         style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
                     >
@@ -2560,91 +2553,6 @@ function renderAdminDashboard() {
                     <div id="productsList" style="max-height: 700px; overflow-y: auto;">
                         Chargement...
                     </div>
-                </div>
-
-                <!-- Onglet 2b: Modifier un produit existant -->
-                <div id="adminTabEdit" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
-                    <h2 style="color: #333; margin-top: 0;">Modifier un produit existant</h2>
-                    <p style="color: #666; margin-bottom: 2rem;">Cliquez sur "Modifier" dans l'onglet "Gestion des produits" pour sélectionner un produit à modifier.</p>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit</label>
-                            <input 
-                                type="text" 
-                                id="editProductName"
-                                placeholder="Ex: Jus Orange"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS)</label>
-                            <input 
-                                type="number" 
-                                id="editProductPrice"
-                                placeholder="Ex: 150"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                            >
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie</label>
-                        <select 
-                            id="editProductCategory"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                        >
-                            <option value="">Sélectionner une catégorie</option>
-                            <option value="alimentaires">Produits alimentaires</option>
-                            <option value="glaces">Produits glacés</option>
-                            <option value="menagers">Produits ménagers</option>
-                            <option value="cosmetiques">Cosmétiques</option>
-                            <option value="parfums">Parfums</option>
-                            <option value="bijoux">Bijoux</option>
-                            <option value="cartes">Cartes de vœux</option>
-                            <option value="hygiene">Hygiène</option>
-                            <option value="maji">Maji</option>
-                            <option value="alcools">Alcools</option>
-                            <option value="paniers">Paniers cadeaux</option>
-                            <option value="tabac">Cigares / Cigarettes / Chicha</option>
-                            <option value="insecticides">Insecticides</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">URL de l'image</label>
-                        <input 
-                            type="text" 
-                            id="editProductImage"
-                            placeholder="Ex: https://example.com/image.jpg"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                        >
-                    </div>
-
-                    <div id="editImagePreview" style="margin-bottom: 1rem; display: none;">
-                        <p style="color: #333; font-weight: 500; margin-bottom: 0.5rem;">Aperçu:</p>
-                        <img id="editPreviewImg" src="" alt="Aperçu" style="max-width: 200px; border-radius: 0.25rem;">
-                    </div>
-
-                    <div style="display: flex; gap: 1rem;">
-                        <button 
-                            class="btn btn-primary" 
-                            onclick="saveProductEdit()"
-                            style="padding: 0.75rem 1rem; background-color: #22c55e; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
-                        >
-                            Enregistrer les modifications
-                        </button>
-                        <button 
-                            class="btn" 
-                            onclick="cancelEditProduct()"
-                            style="padding: 0.75rem 1rem; background-color: #9ca3af; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
-                        >
-                            Annuler
-                        </button>
-                    </div>
-
-                    <div id="editProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500; margin-top: 1rem;"></div>
                 </div>
 
                 <!-- Onglet 3: Paramètres admin -->
@@ -2875,122 +2783,13 @@ function deleteProduct(productId) {
     navigateTo('admin');
 }
 
-// FONCTION: Modifier un produit existant
+// FONCTION: Modifier un produit (fonctionnalité en cours de développement)
 function editProduct(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    // Remplir le formulaire d'édition avec les données actuelles
-    editingProductId = productId;
-    document.getElementById('editProductName').value = product.name;
-    document.getElementById('editProductPrice').value = product.price;
-    document.getElementById('editProductCategory').value = product.category;
-    document.getElementById('editProductImage').value = product.image;
-    
-    // Afficher l'aperçu de l'image actuelle
-    const editPreviewImg = document.getElementById('editPreviewImg');
-    const editImagePreview = document.getElementById('editImagePreview');
-    if (editPreviewImg && editImagePreview) {
-        editPreviewImg.src = product.image;
-        editImagePreview.style.display = 'block';
+    if (product) {
+        alert('Fonctionnalité d\'édition en développement. Produit: ' + product.name);
+        // La modification complète sera implémentée dans la prochaine mise à jour
     }
-
-    // Scroller vers le formulaire d'édition
-    const editForm = document.getElementById('adminTabEdit');
-    if (editForm) {
-        editForm.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// FONCTION: Sauvegarder les modifications du produit
-function saveProductEdit() {
-    if (!editingProductId) {
-        alert('Aucun produit sélectionné pour modification');
-        return;
-    }
-
-    const nameInput = document.getElementById('editProductName');
-    const priceInput = document.getElementById('editProductPrice');
-    const categoryInput = document.getElementById('editProductCategory');
-    const imageInput = document.getElementById('editProductImage');
-    const messageDiv = document.getElementById('editProductMessage');
-
-    if (!nameInput || !priceInput || !categoryInput || !messageDiv) {
-        return;
-    }
-
-    const name = nameInput.value.trim();
-    const price = parseFloat(priceInput.value);
-    const category = categoryInput.value;
-    const image = imageInput ? imageInput.value.trim() : '';
-
-    // Validation
-    if (!name || !price || !category) {
-        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-
-    if (isNaN(price) || price < 0) {
-        messageDiv.textContent = '❌ Le prix doit être un nombre valide';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-
-    // Trouver et mettre à jour le produit dans l'array
-    const productIndex = products.findIndex(p => p.id === editingProductId);
-    if (productIndex > -1) {
-        products[productIndex].name = name;
-        products[productIndex].price = price;
-        products[productIndex].category = category;
-        products[productIndex].image = image || 'https://via.placeholder.com/400';
-    }
-
-    // Mettre à jour dans le localStorage si c'est un produit personnalisé
-    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-    const customIndex = customProducts.findIndex(p => p.id === editingProductId);
-    if (customIndex > -1) {
-        customProducts[customIndex].name = name;
-        customProducts[customIndex].price = price;
-        customProducts[customIndex].category = category;
-        customProducts[customIndex].image = image || 'https://via.placeholder.com/400';
-        localStorage.setItem('customProducts', JSON.stringify(customProducts));
-    }
-
-    // Message de succès
-    messageDiv.textContent = '✅ Produit modifié avec succès!';
-    messageDiv.style.backgroundColor = '#efe';
-    messageDiv.style.color = '#060';
-    messageDiv.style.display = 'block';
-
-    // Réinitialiser le formulaire
-    editingProductId = null;
-    nameInput.value = '';
-    priceInput.value = '';
-    categoryInput.value = '';
-    if (imageInput) imageInput.value = '';
-    document.getElementById('editImagePreview').style.display = 'none';
-
-    // Masquer le message après 3 secondes et rafraîchir
-    setTimeout(() => {
-        messageDiv.style.display = 'none';
-        navigateTo('admin');
-    }, 3000);
-}
-
-// FONCTION: Annuler la modification
-function cancelEditProduct() {
-    editingProductId = null;
-    document.getElementById('editProductName').value = '';
-    document.getElementById('editProductPrice').value = '';
-    document.getElementById('editProductCategory').value = '';
-    document.getElementById('editProductImage').value = '';
-    document.getElementById('editImagePreview').style.display = 'none';
-    document.getElementById('adminTabEdit').style.display = 'none';
 }
 
 // FONCTION: Changer le mot de passe admin
@@ -3041,5 +2840,3 @@ function logoutAdmin() {
 }
 
 // ========== SECTION ADMIN - FIN ==========
-
-
