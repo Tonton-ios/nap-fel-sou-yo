@@ -1328,50 +1328,69 @@ products.forEach(p => {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Load custom products from Firestore
+    // Garder les produits de base intacts
+    const baseProducts = [...products]; // Copier les produits initiaux
+    
+    // Charger les produits personnalisés depuis Firebase
+    let firebaseListenerActive = false;
+    
     db.collection('customProducts').onSnapshot((snapshot) => {
         try {
-            const firebaseProducts = [];
+            const customProducts = [];
             snapshot.forEach((doc) => {
                 const product = doc.data();
                 if (product.id && product.name && product.price && product.category) {
-                    firebaseProducts.push(product);
+                    customProducts.push(product);
                 }
             });
             
-            // Remplacer les produits personnalisés avec ceux de Firebase
-            const customProductIds = new Set(firebaseProducts.map(p => p.id));
-            const otherProducts = products.filter(p => !p.id.startsWith('custom_'));
-            products = [...otherProducts, ...firebaseProducts];
+            // Combiner: produits de base + produits personnalisés Firebase
+            // Supprimer les anciens produits personnalisés d'abord
+            const nonCustom = products.filter(p => !p.id.startsWith('custom_'));
+            products = [...baseProducts, ...customProducts];
             
-            console.log(`${firebaseProducts.length} produits chargés de Firebase`);
+            console.log(`${customProducts.length} produits personnalisés chargés de Firebase`);
+            console.log(`${products.length} produits au total`);
+            
+            // Rafraîchir l'affichage si on est déjà sur une page
+            if (firebaseListenerActive && currentPage === 'products') {
+                navigateTo('products');
+            } else if (firebaseListenerActive && currentPage === 'admin') {
+                navigateTo('admin');
+            }
+            
+            firebaseListenerActive = true;
         } catch (error) {
             console.error('Erreur lors du chargement de Firestore:', error);
+            
             // Fallback: charger depuis localStorage
             try {
                 let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
                 customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
                 
-                // Ajouter les produits personnalisés du localStorage
-                const customProductIds = new Set(customProducts.map(p => p.id));
-                const otherProducts = products.filter(p => !p.id.startsWith('custom_'));
-                products = [...otherProducts, ...customProducts];
+                // Ajouter à la liste existante
+                products = [...baseProducts, ...customProducts];
+                console.log(`${customProducts.length} produits chargés du localStorage (fallback)`);
             } catch (e) {
                 console.error('Impossible de charger les produits:', e);
+                // Continuer avec les produits de base au moins
+                products = [...baseProducts];
             }
         }
     }, (error) => {
         console.error('Erreur Firebase listener:', error);
-        // Continuer avec localStorage si Firebase échoue
+        
+        // Fallback immédiat: charger depuis localStorage
         try {
             let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
             customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
             
-            const customProductIds = new Set(customProducts.map(p => p.id));
-            const otherProducts = products.filter(p => !p.id.startsWith('custom_'));
-            products = [...otherProducts, ...customProducts];
+            products = [...baseProducts, ...customProducts];
+            console.log(`${customProducts.length} produits chargés du localStorage (erreur Firebase)`);
         } catch (e) {
             console.error('Fallback localStorage échoué:', e);
+            // Au minimum, garder les produits de base
+            products = [...baseProducts];
         }
     });
     
