@@ -1639,14 +1639,78 @@ function attachProductsPageListeners() {
 }
 
 // Product Card Component
+// Helper: build candidate image URLs for a given image path and try fallbacks when an image fails to load.
+function getCandidateImageUrls(path) {
+    if (!path) return ['https://via.placeholder.com/400'];
+    path = String(path).trim();
+    if (!path) return ['https://via.placeholder.com/400'];
+
+    // If it's already an absolute URL or data/blob, return it directly
+    if (/^data:|^blob:/.test(path) || /^https?:\/\//i.test(path)) {
+        return [path];
+    }
+
+    const candidates = [];
+
+    // 1) as-provided (relative)
+    candidates.push(path);
+
+    // 2) root-relative using origin
+    try {
+        const rootRelative = location.origin + (path.startsWith('/') ? path : '/' + path);
+        candidates.push(rootRelative);
+    } catch (e) {}
+
+    // 3) directory-relative to the current document
+    try {
+        const dir = location.origin + location.pathname.replace(/\/[^/]*$/, '/');
+        candidates.push(dir + path.replace(/^\/+/, ''));
+    } catch (e) {}
+
+    // 4) If hosted on GitHub Pages (username.github.io), guess raw.githubusercontent URLs
+    try {
+        if (location.hostname && location.hostname.endsWith('github.io')) {
+            const username = location.hostname.split('.')[0];
+            const parts = location.pathname.split('/').filter(Boolean);
+            const repo = parts.length > 0 ? parts[0] : '';
+            if (username && repo) {
+                const cleaned = path.replace(/^\/+/, '');
+                candidates.push(`https://raw.githubusercontent.com/${username}/${repo}/main/${cleaned}`);
+                candidates.push(`https://raw.githubusercontent.com/${username}/${repo}/master/${cleaned}`);
+            }
+        }
+    } catch (e) {}
+
+    // ensure unique order-preserving
+    return [...new Set(candidates)];
+}
+
+function handleImageError(img) {
+    const orig = img.getAttribute('data-src') || img.getAttribute('src') || '';
+    const candidates = getCandidateImageUrls(orig);
+    let attempt = parseInt(img.dataset.attempt || '0', 10);
+    attempt = isNaN(attempt) ? 0 : attempt;
+
+    // move to next candidate
+    attempt++;
+    if (attempt < candidates.length) {
+        img.dataset.attempt = attempt;
+        img.src = candidates[attempt];
+        return;
+    }
+
+    // exhausted candidates -> placeholder
+    img.src = 'https://via.placeholder.com/400';
+}
+
 function renderProductCard(product) {
-    // Gérer les images qui ne chargent pas correctement
-    const imageUrl = product.image || 'https://via.placeholder.com/400';
-    
+    // Product image resolver: try several candidate URLs when an image fails to load
+    const imageUrl = product.image || '';
+
     return `
         <div class="product-card">
             <div class="product-image">
-                <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400';">
+                <img src="${imageUrl || 'https://via.placeholder.com/400'}" data-src="${imageUrl}" alt="${product.name}" onerror="handleImageError(this)">
             </div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
@@ -3294,5 +3358,3 @@ function logoutAdmin() {
 }
 
 // ========== SECTION ADMIN - FIN ==========
-
-
