@@ -2348,4 +2348,715 @@ function attachPaymentListeners() {
     // Listeners are attached inline via onclick
 }
 
+// ========== SECTION ADMIN - DÉBUT ==========
+// Cette section contient tout le système d'administration pour gérer les produits
+
+// Variables globales pour le système admin
+let adminPassword = localStorage.getItem('adminPassword') || 'admin123';
+let isAdminLoggedIn = false;
+let editingProductId = null;
+
+// FONCTION: Afficher la page de connexion admin
+function renderAdminLoginPage() {
+    return `
+        <div class="section section-gray" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+            <div class="container" style="max-width: 500px;">
+                <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <h1 style="text-align: center; margin-bottom: 2rem; color: #dc2626;">🔐 Accès Admin</h1>
+                    <p style="text-align: center; margin-bottom: 2rem; color: #666;">Entrez le mot de passe pour accéder à l'espace administrateur</p>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Mot de passe admin</label>
+                        <input 
+                            type="password" 
+                            id="adminPasswordInput" 
+                            placeholder="Entrez le mot de passe"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; font-size: 1rem; box-sizing: border-box;"
+                            onkeypress="if(event.key==='Enter') loginAdmin()"
+                        >
+                        <div id="adminLoginError" style="color: #dc2626; margin-top: 0.5rem; font-size: 0.875rem; display: none;"></div>
+                    </div>
+                    
+                    <button 
+                        class="btn btn-primary" 
+                        onclick="loginAdmin()"
+                        style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 1rem; font-weight: 500;"
+                    >
+                        Se connecter
+                    </button>
+                    
+                    <button 
+                        class="btn btn-secondary" 
+                        onclick="navigateTo('home')"
+                        style="width: 100%; padding: 0.75rem; background-color: #ccc; color: #333; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 1rem;"
+                    >
+                        Retour à l'accueil
+                    </button>
+
+                    <p style="text-align: center; margin-top: 2rem; color: #999; font-size: 0.875rem;">
+                        <strong>Mot de passe par défaut:</strong> admin123
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// FONCTION: Vérifier le mot de passe et connecter l'admin
+function loginAdmin() {
+    const passwordInput = document.getElementById('adminPasswordInput').value;
+    const errorDiv = document.getElementById('adminLoginError');
+    
+    if (passwordInput === adminPassword) {
+        isAdminLoggedIn = true;
+        navigateTo('admin');
+    } else {
+        errorDiv.textContent = '❌ Mot de passe incorrect';
+        errorDiv.style.display = 'block';
+        document.getElementById('adminPasswordInput').value = '';
+        document.getElementById('adminPasswordInput').focus();
+    }
+}
+
+// FONCTION: Afficher le tableau de bord admin avec les onglets
+function renderAdminDashboard() {
+    if (!isAdminLoggedIn) {
+        return renderAdminLoginPage();
+    }
+    
+    return `
+        <div class="section section-gray" style="min-height: 100vh; padding-top: 2rem; padding-bottom: 2rem;">
+            <div class="container" style="max-width: 1200px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1 style="color: #dc2626; margin: 0;">🛠️ Espace Administrateur</h1>
+                    <button 
+                        class="btn" 
+                        onclick="logoutAdmin()"
+                        style="background-color: #666; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                    >
+                        Se déconnecter
+                    </button>
+                </div>
+
+                <!-- Onglets de navigation admin -->
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd;">
+                    <button 
+                        class="admin-tab-btn active" 
+                        onclick="switchAdminTab('add')"
+                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
+                    >
+                        Ajouter un produit
+                    </button>
+                    <button 
+                        class="admin-tab-btn" 
+                        onclick="switchAdminTab('list')"
+                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
+                    >
+                        Gestion des produits
+                    </button>
+                    <button 
+                        class="admin-tab-btn" 
+                        onclick="switchAdminTab('edit')"
+                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
+                    >
+                        Modifier un produit
+                    </button>
+                    <button 
+                        class="admin-tab-btn" 
+                        onclick="switchAdminTab('settings')"
+                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
+                    >
+                        Paramètres
+                    </button>
+                </div>
+
+                <!-- Onglet 1: Ajouter un produit -->
+                <div id="adminTabAdd" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h2 style="color: #333; margin-top: 0;">Ajouter un nouveau produit</h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit</label>
+                            <input 
+                                type="text" 
+                                id="productName"
+                                placeholder="Ex: Jus Orange"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS)</label>
+                            <input 
+                                type="number" 
+                                id="productPrice"
+                                placeholder="Ex: 150"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                            >
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie</label>
+                        <select 
+                            id="productCategory"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                        >
+                            <option value="">Sélectionner une catégorie</option>
+                            <option value="alimentaires">Produits alimentaires</option>
+                            <option value="glaces">Produits glacés</option>
+                            <option value="menagers">Produits ménagers</option>
+                            <option value="cosmetiques">Cosmétiques</option>
+                            <option value="parfums">Parfums</option>
+                            <option value="bijoux">Bijoux</option>
+                            <option value="cartes">Cartes de vœux</option>
+                            <option value="hygiene">Hygiène</option>
+                            <option value="maji">Maji</option>
+                            <option value="alcools">Alcools</option>
+                            <option value="paniers">Paniers cadeaux</option>
+                            <option value="tabac">Cigares / Cigarettes / Chicha</option>
+                            <option value="insecticides">Insecticides</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">URL de l'image (ou laisser vide)</label>
+                        <input 
+                            type="text" 
+                            id="productImage"
+                            placeholder="Ex: https://example.com/image.jpg"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                        >
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Ou charger une image</label>
+                        <input 
+                            type="file" 
+                            id="productImageFile"
+                            accept="image/*"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                        >
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">Note: L'image chargée sera convertie en URL base64</small>
+                    </div>
+
+                    <div id="imagePreview" style="margin-bottom: 1rem; display: none;">
+                        <p style="color: #333; font-weight: 500; margin-bottom: 0.5rem;">Aperçu:</p>
+                        <img id="previewImg" src="" alt="Aperçu" style="max-width: 200px; border-radius: 0.25rem;">
+                    </div>
+
+                    <button 
+                        class="btn btn-primary" 
+                        onclick="addNewProduct()"
+                        style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                    >
+                        Ajouter le produit
+                    </button>
+
+                    <div id="addProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500;"></div>
+                </div>
+
+                <!-- Onglet 2: Gestion des produits existants -->
+                <div id="adminTabList" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
+                    <h2 style="color: #333; margin-top: 0;">Gestion des produits (${products.length} produits au total)</h2>
+                    
+                    <div id="productsList" style="max-height: 700px; overflow-y: auto;">
+                        Chargement...
+                    </div>
+                </div>
+
+                <!-- Onglet 2b: Modifier un produit existant -->
+                <div id="adminTabEdit" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
+                    <h2 style="color: #333; margin-top: 0;">Modifier un produit existant</h2>
+                    <p style="color: #666; margin-bottom: 2rem;">Cliquez sur "Modifier" dans l'onglet "Gestion des produits" pour sélectionner un produit à modifier.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit</label>
+                            <input 
+                                type="text" 
+                                id="editProductName"
+                                placeholder="Ex: Jus Orange"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS)</label>
+                            <input 
+                                type="number" 
+                                id="editProductPrice"
+                                placeholder="Ex: 150"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                            >
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie</label>
+                        <select 
+                            id="editProductCategory"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                        >
+                            <option value="">Sélectionner une catégorie</option>
+                            <option value="alimentaires">Produits alimentaires</option>
+                            <option value="glaces">Produits glacés</option>
+                            <option value="menagers">Produits ménagers</option>
+                            <option value="cosmetiques">Cosmétiques</option>
+                            <option value="parfums">Parfums</option>
+                            <option value="bijoux">Bijoux</option>
+                            <option value="cartes">Cartes de vœux</option>
+                            <option value="hygiene">Hygiène</option>
+                            <option value="maji">Maji</option>
+                            <option value="alcools">Alcools</option>
+                            <option value="paniers">Paniers cadeaux</option>
+                            <option value="tabac">Cigares / Cigarettes / Chicha</option>
+                            <option value="insecticides">Insecticides</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">URL de l'image</label>
+                        <input 
+                            type="text" 
+                            id="editProductImage"
+                            placeholder="Ex: https://example.com/image.jpg"
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                        >
+                    </div>
+
+                    <div id="editImagePreview" style="margin-bottom: 1rem; display: none;">
+                        <p style="color: #333; font-weight: 500; margin-bottom: 0.5rem;">Aperçu:</p>
+                        <img id="editPreviewImg" src="" alt="Aperçu" style="max-width: 200px; border-radius: 0.25rem;">
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button 
+                            class="btn btn-primary" 
+                            onclick="saveProductEdit()"
+                            style="padding: 0.75rem 1rem; background-color: #22c55e; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                        >
+                            Enregistrer les modifications
+                        </button>
+                        <button 
+                            class="btn" 
+                            onclick="cancelEditProduct()"
+                            style="padding: 0.75rem 1rem; background-color: #9ca3af; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                        >
+                            Annuler
+                        </button>
+                    </div>
+
+                    <div id="editProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500; margin-top: 1rem;"></div>
+                </div>
+
+                <!-- Onglet 3: Paramètres admin -->
+                <div id="adminTabSettings" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
+                    <h2 style="color: #333; margin-top: 0;">Paramètres</h2>
+                    
+                    <div style="margin-bottom: 2rem; padding: 1rem; background-color: #f0f0f0; border-radius: 0.25rem;">
+                        <h3 style="color: #333; margin-top: 0;">Changer le mot de passe admin</h3>
+                        <p style="color: #666;">Mot de passe actuel: <strong>${adminPassword}</strong></p>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nouveau mot de passe</label>
+                            <input 
+                                type="password" 
+                                id="newAdminPassword"
+                                placeholder="Entrez le nouveau mot de passe"
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                            >
+                        </div>
+
+                        <button 
+                            class="btn btn-primary" 
+                            onclick="changeAdminPassword()"
+                            style="padding: 0.75rem 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                        >
+                            Mettre à jour le mot de passe
+                        </button>
+
+                        <div id="passwordChangeMessage" style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500;"></div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem; padding: 1rem; background-color: #f0f0f0; border-radius: 0.25rem;">
+                        <h3 style="color: #333; margin-top: 0;">📊 Statistiques</h3>
+                        <p style="color: #666;">Total des produits: <strong>${products.length}</strong></p>
+                        <p style="color: #666;">Produits personnalisés: <strong>${JSON.parse(localStorage.getItem('customProducts') || '[]').length}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// FONCTION: Afficher la liste des produits pour la gestion
+function renderProductsList(allProducts) {
+    return `
+        <div style="display: grid; gap: 1rem;">
+            ${allProducts.map((product, index) => `
+                <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 0.25rem; display: grid; grid-template-columns: 100px 1fr auto; gap: 1rem; align-items: start;">
+                    <img src="${product.image || 'https://via.placeholder.com/100'}" alt="${product.name}" style="width: 100%; border-radius: 0.25rem; object-fit: cover; height: 100px;">
+                    
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: #333;">${product.name}</h4>
+                        <p style="margin: 0.25rem 0; color: #666;">Prix: <strong>${product.price} GDS</strong></p>
+                        <p style="margin: 0.25rem 0; color: #666;">Catégorie: <strong>${product.category}</strong></p>
+                        <p style="margin: 0.25rem 0; color: #666;">ID: <strong>${product.id}</strong></p>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button 
+                            class="btn" 
+                            onclick="editProduct('${product.id}'); switchAdminTab('edit');"
+                            style="padding: 0.5rem 1rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;"
+                        >
+                            Modifier
+                        </button>
+                        <button 
+                            class="btn" 
+                            onclick="deleteProduct('${product.id}')"
+                            style="padding: 0.5rem 1rem; background-color: #ef4444; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;"
+                        >
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// FONCTION: Basculer entre les onglets admin
+function switchAdminTab(tab) {
+    // Masquer tous les onglets
+    document.getElementById('adminTabAdd').style.display = 'none';
+    document.getElementById('adminTabList').style.display = 'none';
+    document.getElementById('adminTabEdit').style.display = 'none';
+    document.getElementById('adminTabSettings').style.display = 'none';
+    
+    // Enlever la classe active de tous les boutons
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.style.borderBottomColor = 'transparent';
+        btn.style.color = '#666';
+    });
+    
+    // Afficher l'onglet sélectionné
+    if (tab === 'add') {
+        document.getElementById('adminTabAdd').style.display = 'block';
+    } else if (tab === 'list') {
+        document.getElementById('adminTabList').style.display = 'block';
+        // Charger la liste des produits
+        const productsList = document.getElementById('productsList');
+        productsList.innerHTML = renderProductsList(products);
+    } else if (tab === 'edit') {
+        document.getElementById('adminTabEdit').style.display = 'block';
+    } else if (tab === 'settings') {
+        document.getElementById('adminTabSettings').style.display = 'block';
+    }
+    
+    // Marquer le bouton comme actif
+    event.target.style.borderBottomColor = '#dc2626';
+    event.target.style.color = '#dc2626';
+}
+
+// ÉVÉNEMENT: Gérer l'upload d'image depuis le fichier
+document.addEventListener('change', (e) => {
+    if (e.target.id === 'productImageFile') {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const imageInput = document.getElementById('productImage');
+                const previewImg = document.getElementById('previewImg');
+                const imagePreview = document.getElementById('imagePreview');
+                if (imageInput && previewImg && imagePreview) {
+                    imageInput.value = event.target.result;
+                    previewImg.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+});
+
+// FONCTION: Ajouter un nouveau produit (avec validation)
+function addNewProduct() {
+    const nameInput = document.getElementById('productName');
+    const priceInput = document.getElementById('productPrice');
+    const categoryInput = document.getElementById('productCategory');
+    const imageInput = document.getElementById('productImage');
+    const imageFileInput = document.getElementById('productImageFile');
+    const imagePreview = document.getElementById('imagePreview');
+    const messageDiv = document.getElementById('addProductMessage');
+
+    if (!nameInput || !priceInput || !categoryInput || !messageDiv) {
+        return;
+    }
+
+    const name = nameInput.value.trim();
+    const price = parseFloat(priceInput.value);
+    const category = categoryInput.value;
+    const image = imageInput ? imageInput.value.trim() : '';
+
+    // Validation des champs obligatoires
+    if (!name || !price || !category) {
+        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Validation du prix
+    if (isNaN(price) || price < 0) {
+        messageDiv.textContent = '❌ Le prix doit être un nombre valide';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Charger les produits personnalisés depuis le localStorage
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+
+    // Générer un ID unique pour le produit
+    const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+    // Créer l'objet produit
+    const newProduct = {
+        id: newId,
+        name: name,
+        price: price,
+        category: category,
+        image: image || 'https://via.placeholder.com/400'
+    };
+
+    // Ajouter aux produits personnalisés
+    customProducts.push(newProduct);
+    localStorage.setItem('customProducts', JSON.stringify(customProducts));
+
+    // Ajouter à l'array products pour affichage immédiat
+    products.push(newProduct);
+
+    // Message de succès
+    messageDiv.textContent = '✅ Produit ajouté avec succès! Il s\'affichera immédiatement sur le site.';
+    messageDiv.style.backgroundColor = '#efe';
+    messageDiv.style.color = '#060';
+    messageDiv.style.display = 'block';
+
+    // Vider le formulaire
+    nameInput.value = '';
+    priceInput.value = '';
+    categoryInput.value = '';
+    if (imageInput) imageInput.value = '';
+    if (imageFileInput) imageFileInput.value = '';
+    if (imagePreview) imagePreview.style.display = 'none';
+
+    // Masquer le message après 3 secondes
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 3000);
+}
+
+// FONCTION: Supprimer un produit avec confirmation
+function deleteProduct(productId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
+        return;
+    }
+
+    // Retirer des produits personnalisés dans le localStorage
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+    customProducts = customProducts.filter(p => p.id !== productId);
+    localStorage.setItem('customProducts', JSON.stringify(customProducts));
+
+    // Retirer de l'array products
+    const index = products.findIndex(p => p.id === productId);
+    if (index > -1) {
+        products.splice(index, 1);
+    }
+
+    // Rafraîchir le tableau de bord admin
+    navigateTo('admin');
+}
+
+// FONCTION: Modifier un produit existant
+function editProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Remplir le formulaire d'édition avec les données actuelles
+    editingProductId = productId;
+    
+    // Attendre que les éléments soient disponibles
+    setTimeout(() => {
+        const nameInput = document.getElementById('editProductName');
+        const priceInput = document.getElementById('editProductPrice');
+        const categoryInput = document.getElementById('editProductCategory');
+        const imageInput = document.getElementById('editProductImage');
+        const editPreviewImg = document.getElementById('editPreviewImg');
+        const editImagePreview = document.getElementById('editImagePreview');
+        
+        if (nameInput && priceInput && categoryInput && imageInput) {
+            nameInput.value = product.name;
+            priceInput.value = product.price;
+            categoryInput.value = product.category;
+            imageInput.value = product.image;
+            
+            // Afficher l'aperçu de l'image actuelle
+            if (editPreviewImg && editImagePreview) {
+                editPreviewImg.src = product.image;
+                editImagePreview.style.display = 'block';
+            }
+            
+            // Scroller vers le formulaire d'édition
+            const editForm = document.getElementById('adminTabEdit');
+            if (editForm) {
+                editForm.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }, 100);
+}
+
+// FONCTION: Sauvegarder les modifications du produit
+function saveProductEdit() {
+    if (!editingProductId) {
+        alert('Aucun produit sélectionné pour modification');
+        return;
+    }
+
+    const nameInput = document.getElementById('editProductName');
+    const priceInput = document.getElementById('editProductPrice');
+    const categoryInput = document.getElementById('editProductCategory');
+    const imageInput = document.getElementById('editProductImage');
+    const messageDiv = document.getElementById('editProductMessage');
+
+    if (!nameInput || !priceInput || !categoryInput || !messageDiv) {
+        return;
+    }
+
+    const name = nameInput.value.trim();
+    const price = parseFloat(priceInput.value);
+    const category = categoryInput.value;
+    const image = imageInput ? imageInput.value.trim() : '';
+
+    // Validation
+    if (!name || !price || !category) {
+        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    if (isNaN(price) || price < 0) {
+        messageDiv.textContent = '❌ Le prix doit être un nombre valide';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Trouver et mettre à jour le produit dans l'array
+    const productIndex = products.findIndex(p => p.id === editingProductId);
+    if (productIndex > -1) {
+        products[productIndex].name = name;
+        products[productIndex].price = price;
+        products[productIndex].category = category;
+        products[productIndex].image = image || 'https://via.placeholder.com/400';
+    }
+
+    // Mettre à jour dans le localStorage si c'est un produit personnalisé
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+    const customIndex = customProducts.findIndex(p => p.id === editingProductId);
+    if (customIndex > -1) {
+        customProducts[customIndex].name = name;
+        customProducts[customIndex].price = price;
+        customProducts[customIndex].category = category;
+        customProducts[customIndex].image = image || 'https://via.placeholder.com/400';
+        localStorage.setItem('customProducts', JSON.stringify(customProducts));
+    }
+
+    // Message de succès
+    messageDiv.textContent = '✅ Produit modifié avec succès!';
+    messageDiv.style.backgroundColor = '#efe';
+    messageDiv.style.color = '#060';
+    messageDiv.style.display = 'block';
+
+    // Réinitialiser le formulaire
+    editingProductId = null;
+    nameInput.value = '';
+    priceInput.value = '';
+    categoryInput.value = '';
+    if (imageInput) imageInput.value = '';
+    document.getElementById('editImagePreview').style.display = 'none';
+
+    // Masquer le message après 3 secondes et rafraîchir
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+        navigateTo('admin');
+    }, 3000);
+}
+
+// FONCTION: Annuler la modification
+function cancelEditProduct() {
+    editingProductId = null;
+    document.getElementById('editProductName').value = '';
+    document.getElementById('editProductPrice').value = '';
+    document.getElementById('editProductCategory').value = '';
+    document.getElementById('editProductImage').value = '';
+    document.getElementById('editImagePreview').style.display = 'none';
+    document.getElementById('adminTabEdit').style.display = 'none';
+}
+
+// FONCTION: Changer le mot de passe admin
+function changeAdminPassword() {
+    const newPassword = document.getElementById('newAdminPassword').value.trim();
+    const messageDiv = document.getElementById('passwordChangeMessage');
+
+    // Validation du mot de passe
+    if (!newPassword) {
+        messageDiv.textContent = '❌ Veuillez entrer un nouveau mot de passe';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    if (newPassword.length < 4) {
+        messageDiv.textContent = '❌ Le mot de passe doit contenir au moins 4 caractères';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Mettre à jour le mot de passe
+    adminPassword = newPassword;
+    localStorage.setItem('adminPassword', newPassword);
+
+    // Message de succès
+    messageDiv.textContent = '✅ Mot de passe modifié avec succès!';
+    messageDiv.style.backgroundColor = '#efe';
+    messageDiv.style.color = '#060';
+    messageDiv.style.display = 'block';
+
+    // Vider le champ
+    document.getElementById('newAdminPassword').value = '';
+
+    // Masquer le message après 3 secondes
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 3000);
+}
+
+// FONCTION: Déconnecter l'admin
+function logoutAdmin() {
+    isAdminLoggedIn = false;
+    navigateTo('home');
+}
+
+// ========== SECTION ADMIN - FIN ==========
+
 
