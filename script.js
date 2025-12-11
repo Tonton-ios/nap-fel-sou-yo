@@ -23,6 +23,28 @@ function getSafeLocalStorage(key) {
     }
 }
 
+async function uploadToImgur(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch("https://api.imgur.com/3/upload", {
+    method: "POST",
+    headers: {
+      Authorization: "Client-ID 1379bdfb7e6c93a"
+    },
+    body: formData
+  });
+
+  const data = await response.json();
+
+  if (!data.success) {
+    alert("Erreur upload image");
+    throw new Error("Erreur Imgur");
+  }
+
+  return data.data.link; // Lien direct de l’image
+}
+
 // Fonction pour sauvegarder les données du localStorage avec gestion d'erreur
 function setSafeLocalStorage(key, value) {
     try {
@@ -2883,7 +2905,23 @@ function addNewProduct() {
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value);
     const category = categoryInput.value;
-    let image = imageInput ? imageInput.value.trim() : '';
+    let image = '';
+
+const file = document.getElementById('productImageFile').files[0];
+
+if (file) {
+    // Upload Imgur ici
+    image = await<input 
+    type="file" 
+    id="productImageFile"
+    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml"
+    style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+>
+ uploadToImgur(file);
+} else if (imageInput) {
+    // fallback si jamais quelqu’un entre une URL
+    image = imageInput.value.trim();
+}
 
     // Validation des champs obligatoires
     if (!name || !price || !category) {
@@ -2909,12 +2947,7 @@ function addNewProduct() {
     // Générer un ID unique pour le produit
     const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-    // Si une image base64 est disponible, l'utiliser
-    const base64Image = imageInput?.getAttribute('data-base64');
-    if (base64Image && !image.startsWith('http')) {
-        // Utiliser la version base64 stockée (elle est déjà validée)
-        image = base64Image;
-    }
+    
 
     // Créer l'objet produit
     const newProduct = {
