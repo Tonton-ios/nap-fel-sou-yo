@@ -54,33 +54,6 @@ function setSafeLocalStorage(key, value) {
     }
 }
 
-// ========== FIREBASE INITIALIZATION ==========
-const firebaseConfig = {
-  apiKey: "AIzaSyBWp0w8KSCPXgM_nwqhrM3nJ3lpCjJy6II",
-  authDomain: "boncoeuuminimart.firebaseapp.com",
-  projectId: "boncoeuuminimart",
-  storageBucket: "boncoeuuminimart.firebasestorage.app",
-  messagingSenderId: "649094180096",
-  appId: "1:649094180096:web:aac39aa1958c5303c017e5",
-  measurementId: "G-YDJKZ6RMP6"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
-
-// Flag pour savoir si Firebase est prêt
-let firebaseReady = false;
-firebase.firestore().enableNetwork().then(() => {
-    firebaseReady = true;
-    console.log('Firebase connecté');
-}).catch(err => {
-    console.error('Erreur Firebase:', err);
-});
-
-// ========== END FIREBASE INITIALIZATION ==========
-
 // Categories Data
 const categories = [
     //{ id: 'poissonnerie', name: 'Poissonnerie', image: 'https://images.unsplash.com/photo-1637679242615-0ddbbb34b7d7?w=400' },
@@ -1328,71 +1301,33 @@ products.forEach(p => {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Garder les produits de base intacts
-    const baseProducts = [...products]; // Copier les produits initiaux
-    
-    // Charger les produits personnalisés depuis Firebase
-    let firebaseListenerActive = false;
-    
-    db.collection('customProducts').onSnapshot((snapshot) => {
-        try {
-            const customProducts = [];
-            snapshot.forEach((doc) => {
-                const product = doc.data();
-                if (product.id && product.name && product.price && product.category) {
-                    customProducts.push(product);
-                }
-            });
-            
-            // Combiner: produits de base + produits personnalisés Firebase
-            // Supprimer les anciens produits personnalisés d'abord
-            const nonCustom = products.filter(p => !p.id.startsWith('custom_'));
-            products = [...baseProducts, ...customProducts];
-            
-            console.log(`${customProducts.length} produits personnalisés chargés de Firebase`);
-            console.log(`${products.length} produits au total`);
-            
-            // Rafraîchir l'affichage si on est déjà sur une page
-            if (firebaseListenerActive && currentPage === 'products') {
-                navigateTo('products');
-            } else if (firebaseListenerActive && currentPage === 'admin') {
-                navigateTo('admin');
-            }
-            
-            firebaseListenerActive = true;
-        } catch (error) {
-            console.error('Erreur lors du chargement de Firestore:', error);
-            
-            // Fallback: charger depuis localStorage
-            try {
-                let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-                customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
-                
-                // Ajouter à la liste existante
-                products = [...baseProducts, ...customProducts];
-                console.log(`${customProducts.length} produits chargés du localStorage (fallback)`);
-            } catch (e) {
-                console.error('Impossible de charger les produits:', e);
-                // Continuer avec les produits de base au moins
-                products = [...baseProducts];
-            }
-        }
-    }, (error) => {
-        console.error('Erreur Firebase listener:', error);
+    // Load custom products from localStorage with error handling
+    try {
+        let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
         
-        // Fallback immédiat: charger depuis localStorage
+        // Filtrer les produits valides
+        customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
+        
+        // Ajouter les produits personnalisés à la liste
+        products.push(...customProducts);
+        
+        // Vérifier que localStorage persiste correctement
+        setSafeLocalStorage('customProducts', customProducts);
+    } catch (error) {
+        console.error('Erreur lors du chargement des produits personnalisés:', error);
+        // Essayer de récupérer les données partiellement
         try {
-            let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-            customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
-            
-            products = [...baseProducts, ...customProducts];
-            console.log(`${customProducts.length} produits chargés du localStorage (erreur Firebase)`);
+            const stored = localStorage.getItem('customProducts');
+            if (stored && stored.length > 0) {
+                const partial = JSON.parse(stored.substring(0, Math.min(stored.length, 100000)));
+                if (Array.isArray(partial)) {
+                    products.push(...partial.filter(p => p.id && p.name));
+                }
+            }
         } catch (e) {
-            console.error('Fallback localStorage échoué:', e);
-            // Au minimum, garder les produits de base
-            products = [...baseProducts];
+            console.error('Impossible de récupérer les données du localStorage');
         }
-    });
+    }
     
     updateCartCount();
     navigateTo('home');
@@ -1639,78 +1574,14 @@ function attachProductsPageListeners() {
 }
 
 // Product Card Component
-// Helper: build candidate image URLs for a given image path and try fallbacks when an image fails to load.
-function getCandidateImageUrls(path) {
-    if (!path) return ['https://via.placeholder.com/400'];
-    path = String(path).trim();
-    if (!path) return ['https://via.placeholder.com/400'];
-
-    // If it's already an absolute URL or data/blob, return it directly
-    if (/^data:|^blob:/.test(path) || /^https?:\/\//i.test(path)) {
-        return [path];
-    }
-
-    const candidates = [];
-
-    // 1) as-provided (relative)
-    candidates.push(path);
-
-    // 2) root-relative using origin
-    try {
-        const rootRelative = location.origin + (path.startsWith('/') ? path : '/' + path);
-        candidates.push(rootRelative);
-    } catch (e) {}
-
-    // 3) directory-relative to the current document
-    try {
-        const dir = location.origin + location.pathname.replace(/\/[^/]*$/, '/');
-        candidates.push(dir + path.replace(/^\/+/, ''));
-    } catch (e) {}
-
-    // 4) If hosted on GitHub Pages (username.github.io), guess raw.githubusercontent URLs
-    try {
-        if (location.hostname && location.hostname.endsWith('github.io')) {
-            const username = location.hostname.split('.')[0];
-            const parts = location.pathname.split('/').filter(Boolean);
-            const repo = parts.length > 0 ? parts[0] : '';
-            if (username && repo) {
-                const cleaned = path.replace(/^\/+/, '');
-                candidates.push(`https://raw.githubusercontent.com/${username}/${repo}/main/${cleaned}`);
-                candidates.push(`https://raw.githubusercontent.com/${username}/${repo}/master/${cleaned}`);
-            }
-        }
-    } catch (e) {}
-
-    // ensure unique order-preserving
-    return [...new Set(candidates)];
-}
-
-function handleImageError(img) {
-    const orig = img.getAttribute('data-src') || img.getAttribute('src') || '';
-    const candidates = getCandidateImageUrls(orig);
-    let attempt = parseInt(img.dataset.attempt || '0', 10);
-    attempt = isNaN(attempt) ? 0 : attempt;
-
-    // move to next candidate
-    attempt++;
-    if (attempt < candidates.length) {
-        img.dataset.attempt = attempt;
-        img.src = candidates[attempt];
-        return;
-    }
-
-    // exhausted candidates -> placeholder
-    img.src = 'https://via.placeholder.com/400';
-}
-
 function renderProductCard(product) {
-    // Product image resolver: try several candidate URLs when an image fails to load
-    const imageUrl = product.image || '';
-
+    // Gérer les images qui ne chargent pas correctement
+    const imageUrl = product.image || 'https://via.placeholder.com/400';
+    
     return `
         <div class="product-card">
             <div class="product-image">
-                <img src="${imageUrl || 'https://via.placeholder.com/400'}" data-src="${imageUrl}" alt="${product.name}" onerror="handleImageError(this)">
+                <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400';">
             </div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
@@ -3032,12 +2903,16 @@ function addNewProduct() {
         return;
     }
 
+    // Charger les produits personnalisés depuis le localStorage
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+
     // Générer un ID unique pour le produit
     const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
     // Si une image base64 est disponible, l'utiliser
     const base64Image = imageInput?.getAttribute('data-base64');
     if (base64Image && !image.startsWith('http')) {
+        // Utiliser la version base64 stockée (elle est déjà validée)
         image = base64Image;
     }
 
@@ -3047,56 +2922,47 @@ function addNewProduct() {
         name: name,
         price: price,
         category: category,
-        image: image || 'https://via.placeholder.com/400',
-        createdAt: new Date().toISOString()
+        image: image || 'https://via.placeholder.com/400'
     };
 
-    // Afficher message "En attente..."
-    messageDiv.textContent = '⏳ Sauvegarde en cours...';
-    messageDiv.style.backgroundColor = '#e3f2fd';
-    messageDiv.style.color = '#1976d2';
+    // Ajouter aux produits personnalisés
+    customProducts.push(newProduct);
+    
+    // Sauvegarder avec gestion des erreurs
+    const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
+    
+    if (!saveSuccess) {
+        messageDiv.textContent = '⚠️ Attention! Les données n\'ont pas pu être sauvegardées complètement. Utilisez des URLs d\'images externes.';
+        messageDiv.style.backgroundColor = '#fffbeb';
+        messageDiv.style.color = '#92400e';
+        messageDiv.style.display = 'block';
+        return;
+    }
+
+    // Ajouter à l'array products pour affichage immédiat
+    products.push(newProduct);
+
+    // Message de succès
+    messageDiv.textContent = '✅ Produit ajouté avec succès! Il s\'affichera immédiatement sur le site.';
+    messageDiv.style.backgroundColor = '#efe';
+    messageDiv.style.color = '#060';
     messageDiv.style.display = 'block';
 
-    // Ajouter à Firestore
-    db.collection('customProducts').doc(newId).set(newProduct)
-        .then(() => {
-            // Ajouter à l'array local pour affichage immédiat
-            products.push(newProduct);
-            
-            // Aussi sauvegarder en localStorage comme backup
-            let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-            customProducts.push(newProduct);
-            setSafeLocalStorage('customProducts', customProducts);
+    // Vider le formulaire
+    nameInput.value = '';
+    priceInput.value = '';
+    categoryInput.value = '';
+    if (imageInput) {
+        imageInput.value = '';
+        imageInput.removeAttribute('data-base64');
+    }
+    if (imageFileInput) imageFileInput.value = '';
+    if (imagePreview) imagePreview.style.display = 'none';
 
-            // Message de succès
-            messageDiv.textContent = '✅ Produit ajouté avec succès! Il s\'affichera partout immédiatement.';
-            messageDiv.style.backgroundColor = '#efe';
-            messageDiv.style.color = '#060';
-            messageDiv.style.display = 'block';
-
-            // Vider le formulaire
-            nameInput.value = '';
-            priceInput.value = '';
-            categoryInput.value = '';
-            if (imageInput) {
-                imageInput.value = '';
-                imageInput.removeAttribute('data-base64');
-            }
-            if (imageFileInput) imageFileInput.value = '';
-            if (imagePreview) imagePreview.style.display = 'none';
-
-            // Masquer le message après 3 secondes
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 3000);
-        })
-        .catch((error) => {
-            console.error('Erreur Firebase:', error);
-            messageDiv.textContent = '⚠️ Erreur lors de la sauvegarde. Vérifiez votre connexion internet.';
-            messageDiv.style.backgroundColor = '#fffbeb';
-            messageDiv.style.color = '#92400e';
-            messageDiv.style.display = 'block';
-        });
+    // Masquer le message après 3 secondes
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 3000);
 }
 
 // FONCTION: Supprimer un produit avec confirmation
@@ -3105,26 +2971,10 @@ function deleteProduct(productId) {
         return;
     }
 
-    // Supprimer de Firestore
-    if (productId.startsWith('custom_')) {
-        db.collection('customProducts').doc(productId).delete()
-            .then(() => {
-                console.log('Produit supprimé de Firestore');
-                // Supprimer du localStorage aussi
-                let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-                customProducts = customProducts.filter(p => p.id !== productId);
-                setSafeLocalStorage('customProducts', customProducts);
-            })
-            .catch((error) => {
-                console.error('Erreur lors de la suppression:', error);
-                alert('Erreur lors de la suppression du produit');
-            });
-    } else {
-        // Produit de base, ne supprimer que du localStorage
-        let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-        customProducts = customProducts.filter(p => p.id !== productId);
-        setSafeLocalStorage('customProducts', customProducts);
-    }
+    // Retirer des produits personnalisés dans le localStorage
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+    customProducts = customProducts.filter(p => p.id !== productId);
+    setSafeLocalStorage('customProducts', customProducts);
 
     // Retirer de l'array products
     const index = products.findIndex(p => p.id === productId);
@@ -3213,13 +3063,7 @@ function saveProductEdit() {
         return;
     }
 
-    // Afficher message "En attente..."
-    messageDiv.textContent = '⏳ Mise à jour en cours...';
-    messageDiv.style.backgroundColor = '#e3f2fd';
-    messageDiv.style.color = '#1976d2';
-    messageDiv.style.display = 'block';
-
-    // Mettre à jour dans l'array local
+    // Trouver et mettre à jour le produit dans l'array
     const productIndex = products.findIndex(p => p.id === editingProductId);
     if (productIndex > -1) {
         products[productIndex].name = name;
@@ -3228,75 +3072,46 @@ function saveProductEdit() {
         products[productIndex].image = image || 'https://via.placeholder.com/400';
     }
 
-    // Mettre à jour dans Firestore si c'est un produit personnalisé
-    if (editingProductId.startsWith('custom_')) {
-        const updatedProduct = {
-            id: editingProductId,
-            name: name,
-            price: price,
-            category: category,
-            image: image || 'https://via.placeholder.com/400',
-            updatedAt: new Date().toISOString()
-        };
-
-        db.collection('customProducts').doc(editingProductId).set(updatedProduct, { merge: true })
-            .then(() => {
-                // Mettre à jour localStorage aussi
-                let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-                const customIndex = customProducts.findIndex(p => p.id === editingProductId);
-                if (customIndex > -1) {
-                    customProducts[customIndex] = updatedProduct;
-                    setSafeLocalStorage('customProducts', customProducts);
-                }
-
-                // Message de succès
-                messageDiv.textContent = '✅ Produit modifié avec succès!';
-                messageDiv.style.backgroundColor = '#efe';
-                messageDiv.style.color = '#060';
-                messageDiv.style.display = 'block';
-
-                // Réinitialiser le formulaire
-                editingProductId = null;
-                nameInput.value = '';
-                priceInput.value = '';
-                categoryInput.value = '';
-                if (imageInput) imageInput.value = '';
-                document.getElementById('editImagePreview').style.display = 'none';
-
-                // Masquer le message après 3 secondes et rafraîchir
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                    navigateTo('admin');
-                }, 3000);
-            })
-            .catch((error) => {
-                console.error('Erreur Firebase:', error);
-                messageDiv.textContent = '⚠️ Erreur lors de la mise à jour. Vérifiez votre connexion.';
-                messageDiv.style.backgroundColor = '#fffbeb';
-                messageDiv.style.color = '#92400e';
-                messageDiv.style.display = 'block';
-            });
-    } else {
-        // Produit de base, juste mettre à jour localement
-        messageDiv.textContent = '✅ Produit modifié avec succès!';
-        messageDiv.style.backgroundColor = '#efe';
-        messageDiv.style.color = '#060';
-        messageDiv.style.display = 'block';
-
-        // Réinitialiser le formulaire
-        editingProductId = null;
-        nameInput.value = '';
-        priceInput.value = '';
-        categoryInput.value = '';
-        if (imageInput) imageInput.value = '';
-        document.getElementById('editImagePreview').style.display = 'none';
-
-        // Masquer le message après 3 secondes et rafraîchir
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-            navigateTo('admin');
-        }, 3000);
+    // Mettre à jour dans le localStorage si c'est un produit personnalisé
+    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+    const customIndex = customProducts.findIndex(p => p.id === editingProductId);
+    if (customIndex > -1) {
+        customProducts[customIndex].name = name;
+        customProducts[customIndex].price = price;
+        customProducts[customIndex].category = category;
+        customProducts[customIndex].image = image || 'https://via.placeholder.com/400';
+        
+        // Sauvegarder avec gestion des erreurs
+        const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
+        
+        if (!saveSuccess) {
+            messageDiv.textContent = '⚠️ Les données n\'ont pas pu être sauvegardées complètement. Utilisez des URLs d\'images externes.';
+            messageDiv.style.backgroundColor = '#fffbeb';
+            messageDiv.style.color = '#92400e';
+            messageDiv.style.display = 'block';
+            return;
+        }
     }
+
+    // Message de succès
+    messageDiv.textContent = '✅ Produit modifié avec succès!';
+    messageDiv.style.backgroundColor = '#efe';
+    messageDiv.style.color = '#060';
+    messageDiv.style.display = 'block';
+
+    // Réinitialiser le formulaire
+    editingProductId = null;
+    nameInput.value = '';
+    priceInput.value = '';
+    categoryInput.value = '';
+    if (imageInput) imageInput.value = '';
+    document.getElementById('editImagePreview').style.display = 'none';
+
+    // Masquer le message après 3 secondes et rafraîchir
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+        navigateTo('admin');
+    }, 3000);
 }
 
 // FONCTION: Annuler la modification
@@ -3358,3 +3173,7 @@ function logoutAdmin() {
 }
 
 // ========== SECTION ADMIN - FIN ==========
+
+
+
+    
