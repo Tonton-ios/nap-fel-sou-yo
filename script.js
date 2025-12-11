@@ -2,6 +2,58 @@
 let cart = JSON.parse(localStorage.getItem('marketCart')) || [];
 let currentPage = 'home';
 
+// Fonction pour récupérer les données du localStorage avec fallback
+function getSafeLocalStorage(key) {
+    try {
+        const data = localStorage.getItem(key);
+        if (!data) return null;
+        return JSON.parse(data);
+    } catch (error) {
+        console.error(`Erreur lors de la récupération de ${key}:`, error);
+        // Retenter avec une petite attente
+        return new Promise(resolve => {
+            setTimeout(() => {
+                try {
+                    resolve(JSON.parse(localStorage.getItem(key) || 'null'));
+                } catch {
+                    resolve(null);
+                }
+            }, 100);
+        });
+    }
+}
+
+// Fonction pour sauvegarder les données du localStorage avec gestion d'erreur
+function setSafeLocalStorage(key, value) {
+    try {
+        const stringValue = JSON.stringify(value);
+        const sizeMB = new Blob([stringValue]).size / 1024 / 1024;
+        
+        if (sizeMB > 4.5) {
+            console.warn(`Données trop volumineuses (${sizeMB.toFixed(2)}MB) pour ${key}`);
+            return false;
+        }
+        
+        localStorage.setItem(key, stringValue);
+        return true;
+    } catch (error) {
+        if (error.name === 'QuotaExceededError') {
+            console.error(`localStorage plein pour ${key}`);
+            // Essayer de nettoyer les données
+            if (key === 'customProducts') {
+                // Garder seulement les 10 derniers produits
+                const data = JSON.parse(localStorage.getItem(key) || '[]');
+                if (Array.isArray(data) && data.length > 10) {
+                    localStorage.setItem(key, JSON.stringify(data.slice(-10)));
+                }
+            }
+        } else {
+            console.error(`Erreur lors de la sauvegarde de ${key}:`, error);
+        }
+        return false;
+    }
+}
+
 // Categories Data
 const categories = [
     //{ id: 'poissonnerie', name: 'Poissonnerie', image: 'https://images.unsplash.com/photo-1637679242615-0ddbbb34b7d7?w=400' },
@@ -1249,9 +1301,33 @@ products.forEach(p => {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Load custom products from localStorage
-    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-    products.push(...customProducts);
+    // Load custom products from localStorage with error handling
+    try {
+        let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+        
+        // Filtrer les produits valides
+        customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
+        
+        // Ajouter les produits personnalisés à la liste
+        products.push(...customProducts);
+        
+        // Vérifier que localStorage persiste correctement
+        setSafeLocalStorage('customProducts', customProducts);
+    } catch (error) {
+        console.error('Erreur lors du chargement des produits personnalisés:', error);
+        // Essayer de récupérer les données partiellement
+        try {
+            const stored = localStorage.getItem('customProducts');
+            if (stored && stored.length > 0) {
+                const partial = JSON.parse(stored.substring(0, Math.min(stored.length, 100000)));
+                if (Array.isArray(partial)) {
+                    products.push(...partial.filter(p => p.id && p.name));
+                }
+            }
+        } catch (e) {
+            console.error('Impossible de récupérer les données du localStorage');
+        }
+    }
     
     updateCartCount();
     navigateTo('home');
@@ -1499,10 +1575,13 @@ function attachProductsPageListeners() {
 
 // Product Card Component
 function renderProductCard(product) {
+    // Gérer les images qui ne chargent pas correctement
+    const imageUrl = product.image || 'https://via.placeholder.com/400';
+    
     return `
         <div class="product-card">
             <div class="product-image">
-                <img src="${product.image}" alt="${product.name}">
+                <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400';">
             </div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
@@ -1604,7 +1683,7 @@ function getCartTotal() {
 }
 
 function saveCart() {
-    localStorage.setItem('marketCart', JSON.stringify(cart));
+    setSafeLocalStorage('marketCart', cart);
     updateCartCount();
 }
 
@@ -2128,7 +2207,7 @@ function selectPayment(method) {
     radios.forEach(r => r.checked = false);
     const selected = document.querySelector(`input[value="${method}"]`);
     if (selected) selected.checked = true;
-    localStorage.setItem('selectedPaymentMethod', method);
+    setSafeLocalStorage('selectedPaymentMethod', method);
 }
 
 function confirmPayment() {
@@ -2331,7 +2410,7 @@ function completeOrder(paymentMethod) {
     // Clear cart after order
     setTimeout(() => {
         cart = [];
-        localStorage.setItem('cart', JSON.stringify(cart));
+        setSafeLocalStorage('marketCart', cart);
         currentPage = 'home';
         loadPage();
     }, 500);
@@ -2771,12 +2850,18 @@ document.addEventListener('change', (e) => {
                 const previewImg = document.getElementById('previewImg');
                 const imagePreview = document.getElementById('imagePreview');
                 if (imageInput && previewImg && imagePreview) {
-                    imageInput.value = event.target.result;
-                    previewImg.src = event.target.result;
+                    // Store as blob URL for better mobile compatibility
+                    const blob = new Blob([event.target.result], { type: file.type });
+                    const blobUrl = URL.createObjectURL(blob);
+                    imageInput.value = blobUrl;
+                    previewImg.src = blobUrl;
                     imagePreview.style.display = 'block';
+                    
+                    // Also store the base64 as data attribute for persistence
+                    imageInput.setAttribute('data-base64', event.target.result);
                 }
             };
-            reader.readAsDataURL(file);
+            reader.readAsArrayBuffer(file);
         }
     }
 });
@@ -2798,7 +2883,7 @@ function addNewProduct() {
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value);
     const category = categoryInput.value;
-    const image = imageInput ? imageInput.value.trim() : '';
+    let image = imageInput ? imageInput.value.trim() : '';
 
     // Validation des champs obligatoires
     if (!name || !price || !category) {
@@ -2824,6 +2909,13 @@ function addNewProduct() {
     // Générer un ID unique pour le produit
     const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
+    // Si une image base64 est disponible, l'utiliser
+    const base64Image = imageInput?.getAttribute('data-base64');
+    if (base64Image && !image.startsWith('http')) {
+        // Utiliser la version base64 stockée (elle est déjà validée)
+        image = base64Image;
+    }
+
     // Créer l'objet produit
     const newProduct = {
         id: newId,
@@ -2835,7 +2927,17 @@ function addNewProduct() {
 
     // Ajouter aux produits personnalisés
     customProducts.push(newProduct);
-    localStorage.setItem('customProducts', JSON.stringify(customProducts));
+    
+    // Sauvegarder avec gestion des erreurs
+    const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
+    
+    if (!saveSuccess) {
+        messageDiv.textContent = '⚠️ Attention! Les données n\'ont pas pu être sauvegardées complètement. Utilisez des URLs d\'images externes.';
+        messageDiv.style.backgroundColor = '#fffbeb';
+        messageDiv.style.color = '#92400e';
+        messageDiv.style.display = 'block';
+        return;
+    }
 
     // Ajouter à l'array products pour affichage immédiat
     products.push(newProduct);
@@ -2850,7 +2952,10 @@ function addNewProduct() {
     nameInput.value = '';
     priceInput.value = '';
     categoryInput.value = '';
-    if (imageInput) imageInput.value = '';
+    if (imageInput) {
+        imageInput.value = '';
+        imageInput.removeAttribute('data-base64');
+    }
     if (imageFileInput) imageFileInput.value = '';
     if (imagePreview) imagePreview.style.display = 'none';
 
@@ -2869,7 +2974,7 @@ function deleteProduct(productId) {
     // Retirer des produits personnalisés dans le localStorage
     let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
     customProducts = customProducts.filter(p => p.id !== productId);
-    localStorage.setItem('customProducts', JSON.stringify(customProducts));
+    setSafeLocalStorage('customProducts', customProducts);
 
     // Retirer de l'array products
     const index = products.findIndex(p => p.id === productId);
@@ -2939,7 +3044,7 @@ function saveProductEdit() {
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value);
     const category = categoryInput.value;
-    const image = imageInput ? imageInput.value.trim() : '';
+    let image = imageInput ? imageInput.value.trim() : '';
 
     // Validation
     if (!name || !price || !category) {
@@ -2975,7 +3080,17 @@ function saveProductEdit() {
         customProducts[customIndex].price = price;
         customProducts[customIndex].category = category;
         customProducts[customIndex].image = image || 'https://via.placeholder.com/400';
-        localStorage.setItem('customProducts', JSON.stringify(customProducts));
+        
+        // Sauvegarder avec gestion des erreurs
+        const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
+        
+        if (!saveSuccess) {
+            messageDiv.textContent = '⚠️ Les données n\'ont pas pu être sauvegardées complètement. Utilisez des URLs d\'images externes.';
+            messageDiv.style.backgroundColor = '#fffbeb';
+            messageDiv.style.color = '#92400e';
+            messageDiv.style.display = 'block';
+            return;
+        }
     }
 
     // Message de succès
@@ -3034,7 +3149,7 @@ function changeAdminPassword() {
 
     // Mettre à jour le mot de passe
     adminPassword = newPassword;
-    localStorage.setItem('adminPassword', newPassword);
+    setSafeLocalStorage('adminPassword', newPassword);
 
     // Message de succès
     messageDiv.textContent = '✅ Mot de passe modifié avec succès!';
