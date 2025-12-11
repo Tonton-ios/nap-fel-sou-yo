@@ -2905,23 +2905,7 @@ function addNewProduct() {
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value);
     const category = categoryInput.value;
-    let image = '';
-
-const file = document.getElementById('productImageFile').files[0];
-
-if (file) {
-    // Upload Imgur ici
-    image = await<input 
-    type="file" 
-    id="productImageFile"
-    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp,image/svg+xml"
-    style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
->
- uploadToImgur(file);
-} else if (imageInput) {
-    // fallback si jamais quelqu’un entre une URL
-    image = imageInput.value.trim();
-}
+    let image = imageInput ? imageInput.value.trim() : '';
 
     // Validation des champs obligatoires
     if (!name || !price || !category) {
@@ -2947,7 +2931,12 @@ if (file) {
     // Générer un ID unique pour le produit
     const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-    
+    // Si une image base64 est disponible, l'utiliser
+    const base64Image = imageInput?.getAttribute('data-base64');
+    if (base64Image && !image.startsWith('http')) {
+        // Utiliser la version base64 stockée (elle est déjà validée)
+        image = base64Image;
+    }
 
     // Créer l'objet produit
     const newProduct = {
