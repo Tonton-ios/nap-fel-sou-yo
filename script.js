@@ -38,7 +38,11 @@ async function uploadToImgur(file) {
   const data = await response.json();
 
   if (!data.success) {
-    throw new Error(`Erreur lors de l'upload sur Imgur: ${data.data.error}`);
+    // La structure de l'erreur Imgur peut varier.
+    // On vérifie si data.data existe avant de l'utiliser.
+    const errorMessage = data.data?.error || JSON.stringify(data.data);
+    console.error("Réponse d'erreur Imgur:", data);
+    throw new Error(`Erreur lors de l'upload sur Imgur: ${errorMessage}`);
   }
 
   return data.data.link; // Lien direct de l’image
