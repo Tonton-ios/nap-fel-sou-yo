@@ -1359,13 +1359,14 @@ async function saveProductToSupabase(product) {
     if (!isSupabaseAvailable()) throw new Error('Supabase not initialized');
     const { data, error } = await supabase
         .from('products')
-        .insert(product);
+        .insert(product)
+        .select(); // Demander à Supabase de retourner la ligne complète qui a été insérée
 
     if (error) {
         console.error('Erreur sauvegarde Supabase:', error);
         throw error;
     }
-    return data;
+    return data[0]; // Retourner le premier (et unique) produit créé
 }
 
 async function fetchProductsFromSupabase() {
@@ -3042,10 +3043,11 @@ async function handleAddProductSubmit(event) {
         progressBar.textContent = '100%';
 
         // Sauvegarder sur Supabase
-        await saveProductToSupabase(newProduct);
+        const savedProduct = await saveProductToSupabase(newProduct);
 
         // Ajouter à la liste locale pour affichage immédiat
-        products.push(newProduct);
+        // On utilise le produit retourné par Supabase qui contient l'ID et created_at
+        products.push(savedProduct);
 
         // Message de succès
         messageDiv.textContent = '✅ Produit ajouté avec succès !';
