@@ -1523,8 +1523,9 @@ function navigateTo(page) {
             mainContent.innerHTML = renderAdminDashboard();
             // Initialize Firebase admin form when admin page is rendered
             setTimeout(() => {
-                if (typeof window.initAdminForm === 'function') {
-                    window.initAdminForm();
+                const adminForm = document.getElementById('adminProductForm');
+                if (adminForm) {
+                    adminForm.addEventListener('submit', handleAddProductSubmit);
                 }
             }, 100);
             break;
@@ -3117,134 +3118,105 @@ document.addEventListener('change', (e) => {
     }
 });
 
-// FONCTION: Ajouter un nouveau produit (avec validation)
-// Live preview when admin pastes an image URL (Imgur or other)
-document.addEventListener('input', (e) => {
-    if (e.target && e.target.id === 'productImage') {
-        const url = e.target.value.trim();
-        const previewImg = document.getElementById('previewImg');
-        const imagePreview = document.getElementById('imagePreview');
-        if (!previewImg || !imagePreview) return;
-        if (!url) { previewImg.src = ''; imagePreview.style.display = 'none'; return; }
+async function handleAddProductSubmit(event) {
+    event.preventDefault();
 
-        if (/^https?:\/\//i.test(url)) {
-            previewImg.src = url;
-            imagePreview.style.display = 'block';
-            previewImg.onerror = () => { previewImg.src = 'https://via.placeholder.com/200'; };
-        } else if (url.startsWith('data:')) {
-            previewImg.src = url;
-            imagePreview.style.display = 'block';
-        } else {
-            imagePreview.style.display = 'none';
-        }
-    }
-});
-function addNewProduct() {
     const nameInput = document.getElementById('productName');
     const priceInput = document.getElementById('productPrice');
     const categoryInput = document.getElementById('productCategory');
-    const imageInput = document.getElementById('productImage');
-    const imageFileInput = document.getElementById('productImageFile');
-    const imagePreview = document.getElementById('imagePreview');
+    const imageFileInput = document.getElementById('productImage');
     const messageDiv = document.getElementById('addProductMessage');
 
-    if (!nameInput || !priceInput || !categoryInput || !messageDiv) {
+    if (!nameInput || !priceInput || !categoryInput || !imageFileInput || !messageDiv) {
         return;
     }
 
     const name = nameInput.value.trim();
     const price = parseFloat(priceInput.value);
     const category = categoryInput.value;
-    let image = imageInput ? imageInput.value.trim() : '';
+    const file = imageFileInput.files[0];
 
     // Validation des champs obligatoires
-    if (!name || !price || !category) {
+    if (!name || !price || !category || !file) {
         messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
+        messageDiv.style.backgroundColor = '#fee2e2';
+        messageDiv.style.color = '#991b1b';
         messageDiv.style.display = 'block';
         return;
     }
 
     // Validation du prix
     if (isNaN(price) || price < 0) {
-        messageDiv.textContent = '❌ Le prix doit être un nombre valide';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
+        messageDiv.textContent = '❌ Le prix doit être un nombre valide.';
+        messageDiv.style.backgroundColor = '#fee2e2';
+        messageDiv.style.color = '#991b1b';
         messageDiv.style.display = 'block';
         return;
     }
 
-    // Charger les produits personnalisés depuis le localStorage
-    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-
-    // Générer un ID unique pour le produit
-    const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-
-    // Utiliser l'image fournie (URL ou base64)
-    let finalImage = image.trim();
-    if (!finalImage) {
-        const base64Image = imageInput?.getAttribute('data-base64');
-        if (base64Image) {
-            finalImage = base64Image;
-        }
-    }
-
-    // Créer l'objet produit
-    const newProduct = {
-        id: newId,
-        name: name,
-        price: price,
-        category: category,
-        image: finalImage || 'https://via.placeholder.com/400'
-    };
-
-    // Ajouter aux produits personnalisés
-    customProducts.push(newProduct);
-    
-    // Sauvegarder avec gestion des erreurs
-    const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
-    
-    if (!saveSuccess) {
-        messageDiv.textContent = '⚠️ Attention! Les données n\'ont pas pu être sauvegardées. Veuillez rafraîchir la page et réessayer.';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-    
-    // Vérifier que le produit a été sauvegardé
-    try {
-        const saved = JSON.parse(localStorage.getItem('customProducts') || '[]');
-        console.log(`💾 ${saved.length} produit(s) sauvegardé(s)`);
-    } catch (e) {
-        console.error('Erreur de sauvegarde');
-    }
-
-    // Ajouter à l'array products pour affichage immédiat
-    products.push(newProduct);
-
-    // Message de succès
-    messageDiv.textContent = '✅ Produit ajouté avec succès! Il s\'affichera immédiatement.';
+    // Afficher un message de chargement
+    messageDiv.textContent = '⏳ Upload de l\'image et sauvegarde du produit...';
     messageDiv.style.backgroundColor = '#dbeafe';
     messageDiv.style.color = '#1e40af';
     messageDiv.style.display = 'block';
 
-    // Vider le formulaire
-    nameInput.value = '';
-    priceInput.value = '';
-    categoryInput.value = '';
-    if (imageInput) {
-        imageInput.value = '';
-        imageInput.removeAttribute('data-base64');
-    }
-    if (imageFileInput) imageFileInput.value = '';
-    if (imagePreview) imagePreview.style.display = 'none';
+    try {
+        let imageUrl;
+        // Générer un ID unique pour le produit
+        const newId = 'prod_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-    // Masquer le message après 3 secondes
-    setTimeout(() => {
-        messageDiv.style.display = 'none';
-    }, 3000);
+        if (isFirebaseAvailable()) {
+            // Upload sur Firebase Storage
+            const fileExtension = file.name.split('.').pop();
+            const storagePath = `products/${newId}.${fileExtension}`;
+            
+            const storageRef = firebase.storage().ref().child(storagePath);
+            await storageRef.put(file);
+            imageUrl = await storageRef.getDownloadURL();
+            
+        } else {
+            // Fallback sur Imgur si Firebase n'est pas dispo
+            console.warn("Firebase non disponible, upload vers Imgur.");
+            imageUrl = await uploadToImgur(file);
+        }
+
+        // Créer l'objet produit
+        const newProduct = {
+            id: newId,
+            name: name,
+            price: price,
+            category: category,
+            image: imageUrl,
+            description: document.getElementById('productDesc').value.trim() || ''
+        };
+
+        if (isFirebaseAvailable()) {
+            // Sauvegarder sur Firestore
+            await saveProductToFirestore(newProduct);
+        } else {
+            // Fallback sur localStorage
+            let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
+            customProducts.push(newProduct);
+            setSafeLocalStorage('customProducts', customProducts);
+        }
+
+        // Ajouter à la liste locale pour affichage immédiat
+        products.push(newProduct);
+
+        // Message de succès
+        messageDiv.textContent = '✅ Produit ajouté avec succès !';
+        messageDiv.style.backgroundColor = '#dcfce7';
+        messageDiv.style.color = '#166534';
+
+        // Vider le formulaire
+        event.target.reset();
+
+    } catch (error) {
+        console.error("Erreur lors de l'ajout du produit:", error);
+        messageDiv.textContent = `❌ Erreur: ${error.message}`;
+        messageDiv.style.backgroundColor = '#fee2e2';
+        messageDiv.style.color = '#991b1b';
+    }
 }
 
 // FONCTION: Supprimer un produit avec confirmation
