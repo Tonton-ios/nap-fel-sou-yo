@@ -51,8 +51,9 @@ function setSafeLocalStorage(key, value) {
         const stringValue = JSON.stringify(value);
         const sizeMB = new Blob([stringValue]).size / 1024 / 1024;
         
-        if (sizeMB > 4.5) {
-            console.warn(`Données trop volumineuses (${sizeMB.toFixed(2)}MB) pour ${key}`);
+        // Augmenter la limite pour les images
+        if (sizeMB > 9) {
+            console.warn(`Données volumineuses (${sizeMB.toFixed(2)}MB) pour ${key}`);
             return false;
         }
         
@@ -63,10 +64,11 @@ function setSafeLocalStorage(key, value) {
             console.error(`localStorage plein pour ${key}`);
             // Essayer de nettoyer les données
             if (key === 'customProducts') {
-                // Garder seulement les 10 derniers produits
+                // Garder seulement les 5 derniers produits pour faire de la place
                 const data = JSON.parse(localStorage.getItem(key) || '[]');
-                if (Array.isArray(data) && data.length > 10) {
-                    localStorage.setItem(key, JSON.stringify(data.slice(-10)));
+                if (Array.isArray(data) && data.length > 5) {
+                    localStorage.setItem(key, JSON.stringify(data.slice(-5)));
+                    return false;
                 }
             }
         } else {
@@ -1372,12 +1374,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
         
         // Filtrer les produits valides
-        customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category);
+        customProducts = customProducts.filter(p => p.id && p.name && p.price && p.category && p.image);
         
         // Ajouter les produits personnalisés à la liste
-        products.push(...customProducts);
+        if (customProducts.length > 0) {
+            products.push(...customProducts);
+            console.log(`✅ ${customProducts.length} produit(s) personnalisé(s) chargé(s)`);
+        }
         
-        // Vérifier que localStorage persiste correctement
+        // Sauvegarder à nouveau pour vérifier
         setSafeLocalStorage('customProducts', customProducts);
     } catch (error) {
         console.error('Erreur lors du chargement des produits personnalisés:', error);
@@ -1385,9 +1390,11 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const stored = localStorage.getItem('customProducts');
             if (stored && stored.length > 0) {
-                const partial = JSON.parse(stored.substring(0, Math.min(stored.length, 100000)));
+                const partial = JSON.parse(stored.substring(0, Math.min(stored.length, 1000000)));
                 if (Array.isArray(partial)) {
-                    products.push(...partial.filter(p => p.id && p.name));
+                    const validProducts = partial.filter(p => p.id && p.name && p.image);
+                    products.push(...validProducts);
+                    console.log(`✅ ${validProducts.length} produit(s) chargé(s) partiellement`);
                 }
             }
         } catch (e) {
@@ -1641,13 +1648,18 @@ function attachProductsPageListeners() {
 
 // Product Card Component
 function renderProductCard(product) {
-    // Gérer les images qui ne chargent pas correctement
-    const imageUrl = product.image || 'https://via.placeholder.com/400';
+    // Gérer les images - support base64 et URLs
+    let imageUrl = product.image || 'https://via.placeholder.com/400';
+    
+    // Si c'est du base64 trop long, utiliser une image placeholder
+    if (imageUrl.startsWith('data:') && imageUrl.length > 800000) {
+        imageUrl = 'https://via.placeholder.com/400';
+    }
     
     return `
         <div class="product-card">
             <div class="product-image">
-                <img src="${imageUrl}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400';">
+                <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400';">
             </div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
@@ -2682,7 +2694,7 @@ function renderAdminDashboard() {
                             accept="image/*"
                             style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
                         >
-                        <small style="color: #666; display: block; margin-top: 0.5rem;">Note: L'image chargée sera convertie en URL base64</small>
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">Note: Sélectionnez une image depuis votre ordinateur ou téléphone (JPG, PNG, GIF, WebP)</small>
                     </div>
 
                     <div id="imagePreview" style="margin-bottom: 1rem; display: none;">
@@ -2839,9 +2851,15 @@ function renderAdminDashboard() {
 function renderProductsList(allProducts) {
     return `
         <div style="display: grid; gap: 1rem;">
-            ${allProducts.map((product, index) => `
+            ${allProducts.map((product, index) => {
+                let imgSrc = product.image || 'https://via.placeholder.com/100';
+                // Si image base64 trop longue, utiliser placeholder
+                if (imgSrc.startsWith('data:') && imgSrc.length > 800000) {
+                    imgSrc = 'https://via.placeholder.com/100';
+                }
+                return `
                 <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 0.25rem; display: grid; grid-template-columns: 100px 1fr auto; gap: 1rem; align-items: start;">
-                    <img src="${product.image || 'https://via.placeholder.com/100'}" alt="${product.name}" style="width: 100%; border-radius: 0.25rem; object-fit: cover; height: 100px;">
+                    <img src="${imgSrc}" alt="${product.name}" style="width: 100%; border-radius: 0.25rem; object-fit: cover; height: 100px;">
                     
                     <div>
                         <h4 style="margin: 0 0 0.5rem 0; color: #333;">${product.name}</h4>
@@ -2867,7 +2885,8 @@ function renderProductsList(allProducts) {
                         </button>
                     </div>
                 </div>
-            `).join('')}
+                `;
+            }).join('')}
         </div>
     `;
 }
@@ -2910,24 +2929,52 @@ document.addEventListener('change', (e) => {
     if (e.target.id === 'productImageFile') {
         const file = e.target.files[0];
         if (file) {
+            const imageInput = document.getElementById('productImage');
+            const previewImg = document.getElementById('previewImg');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (!imageInput || !previewImg || !imagePreview) return;
+            
+            // Convertir l'image en base64 avec compression
             const reader = new FileReader();
             reader.onload = (event) => {
-                const imageInput = document.getElementById('productImage');
-                const previewImg = document.getElementById('previewImg');
-                const imagePreview = document.getElementById('imagePreview');
-                if (imageInput && previewImg && imagePreview) {
-                    // Store as blob URL for better mobile compatibility
-                    const blob = new Blob([event.target.result], { type: file.type });
-                    const blobUrl = URL.createObjectURL(blob);
-                    imageInput.value = blobUrl;
-                    previewImg.src = blobUrl;
+                const base64String = event.target.result;
+                
+                // Si l'image est trop grande, la compresser
+                if (base64String.length > 500000) {
+                    // Compresser via canvas
+                    const img = new Image();
+                    img.src = base64String;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Réduire la taille si image trop grande
+                        if (width > 1200) {
+                            height = Math.round((height * 1200) / width);
+                            width = 1200;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                        imageInput.value = compressedBase64;
+                        imageInput.setAttribute('data-base64', compressedBase64);
+                        previewImg.src = compressedBase64;
+                        imagePreview.style.display = 'block';
+                    };
+                } else {
+                    imageInput.value = base64String;
+                    imageInput.setAttribute('data-base64', base64String);
+                    previewImg.src = base64String;
                     imagePreview.style.display = 'block';
-                    
-                    // Also store the base64 as data attribute for persistence
-                    imageInput.setAttribute('data-base64', event.target.result);
                 }
             };
-            reader.readAsArrayBuffer(file);
+            reader.readAsDataURL(file);
         }
     }
 });
@@ -2975,11 +3022,13 @@ function addNewProduct() {
     // Générer un ID unique pour le produit
     const newId = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-    // Si une image base64 est disponible, l'utiliser
-    const base64Image = imageInput?.getAttribute('data-base64');
-    if (base64Image && !image.startsWith('http')) {
-        // Utiliser la version base64 stockée (elle est déjà validée)
-        image = base64Image;
+    // Utiliser l'image fournie (URL ou base64)
+    let finalImage = image.trim();
+    if (!finalImage) {
+        const base64Image = imageInput?.getAttribute('data-base64');
+        if (base64Image) {
+            finalImage = base64Image;
+        }
     }
 
     // Créer l'objet produit
@@ -2988,7 +3037,7 @@ function addNewProduct() {
         name: name,
         price: price,
         category: category,
-        image: image || 'https://via.placeholder.com/400'
+        image: finalImage || 'https://via.placeholder.com/400'
     };
 
     // Ajouter aux produits personnalisés
@@ -2998,9 +3047,9 @@ function addNewProduct() {
     const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
     
     if (!saveSuccess) {
-        messageDiv.textContent = '⚠️ Attention! Les données n\'ont pas pu être sauvegardées complètement. Utilisez des URLs d\'images externes.';
-        messageDiv.style.backgroundColor = '#fffbeb';
-        messageDiv.style.color = '#92400e';
+        messageDiv.textContent = '⚠️ Attention! Les données n\'ont pas pu être sauvegardées. Veuillez rafraîchir la page et réessayer.';
+        messageDiv.style.backgroundColor = '#fee';
+        messageDiv.style.color = '#c00';
         messageDiv.style.display = 'block';
         return;
     }
@@ -3009,9 +3058,9 @@ function addNewProduct() {
     products.push(newProduct);
 
     // Message de succès
-    messageDiv.textContent = '✅ Produit ajouté avec succès! Il s\'affichera immédiatement sur le site.';
-    messageDiv.style.backgroundColor = '#efe';
-    messageDiv.style.color = '#060';
+    messageDiv.textContent = '✅ Produit ajouté avec succès! Il s\'affichera immédiatement.';
+    messageDiv.style.backgroundColor = '#dbeafe';
+    messageDiv.style.color = '#1e40af';
     messageDiv.style.display = 'block';
 
     // Vider le formulaire
