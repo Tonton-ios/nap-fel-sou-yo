@@ -1382,6 +1382,29 @@ async function fetchProductsFromSupabase() {
     return data;
 }
 
+async function updateProductInSupabase(productId, updatedData) {
+    if (!isSupabaseAvailable()) throw new Error('Supabase not initialized');
+    const { data, error } = await supabase
+        .from('products')
+        .update(updatedData)
+        .eq('id', productId);
+
+    if (error) {
+        console.error('Erreur mise à jour Supabase:', error);
+        throw error;
+    }
+    return data;
+}
+
+async function deleteProductFromSupabase(productId) {
+    if (!isSupabaseAvailable()) throw new Error('Supabase not initialized');
+    const { error } = await supabase.from('products').delete().eq('id', productId);
+    if (error) {
+        console.error('Erreur suppression Supabase:', error);
+        throw error;
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     // If Supabase is initialized, try to load remote products first
@@ -1469,11 +1492,17 @@ function navigateTo(page) {
             break;
         case 'admin':
             mainContent.innerHTML = renderAdminDashboard();
-            // Initialize Firebase admin form when admin page is rendered
+            // Attacher les écouteurs d'événements pour la page admin
             setTimeout(() => {
-                const adminForm = document.getElementById('adminProductForm');
-                if (adminForm && typeof handleAddProductSubmit === 'function') {
-                    adminForm.addEventListener('submit', handleAddProductSubmit);
+                const addProductForm = document.getElementById('adminProductForm');
+                if (addProductForm) {
+                    addProductForm.addEventListener('submit', handleAddProductSubmit);
+                }
+
+                // Attacher l'écouteur pour le formulaire de connexion s'il est affiché
+                const loginForm = document.getElementById('adminLoginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', loginAdmin);
                 }
             }, 100);
             break;
@@ -2651,6 +2680,20 @@ function renderAdminDashboard() {
                     >
                         Ajouter un produit
                     </button>
+                    <button
+                        class="admin-tab-btn"
+                        onclick="switchAdminTab('list')"
+                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
+                    >
+                        Gérer les produits
+                    </button>
+                    <button
+                        class="admin-tab-btn"
+                        onclick="switchAdminTab('edit')"
+                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666; display: none;"
+                    >
+                        Modifier un produit
+                    </button>
                 </div>
 
                 <!-- Onglet 1: Ajouter un produit via Firebase -->
@@ -2750,6 +2793,87 @@ function renderAdminDashboard() {
 
                     <div id="addProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500;"></div>
                 </div>
+
+                <!-- Onglet 2: Gestion des produits existants -->
+                <div id="adminTabList" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
+                    <h2 style="color: #333; margin-top: 0;">Gestion des produits (${products.length} produits au total)</h2>
+                    <div id="productsListContainer" style="max-height: 700px; overflow-y: auto;">
+                        <!-- La liste des produits sera injectée ici par JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Onglet 3: Modifier un produit existant -->
+                <div id="adminTabEdit" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
+                    <h2 style="color: #333; margin-top: 0;">Modifier un produit</h2>
+                    <p style="color: #666; margin-bottom: 2rem;">Modifiez les informations du produit ci-dessous.</p>
+                    
+                    <form id="editProductForm">
+                        <input type="hidden" id="editProductId">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label for="editProductName" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit</label>
+                                <input type="text" id="editProductName" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label for="editProductPrice" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS)</label>
+                                <input type="number" id="editProductPrice" required min="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label for="editProductCategory" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie</label>
+                            <select id="editProductCategory" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;">
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="alimentaires">Produits alimentaires</option>
+                                <option value="glaces">Produits glacés</option>
+                                <option value="menagers">Produits ménagers</option>
+                                <option value="cosmetiques">Cosmétiques</option>
+                                <option value="parfums">Parfums</option>
+                                <option value="bijoux">Bijoux</option>
+                                <option value="cartes">Cartes de vœux</option>
+                                <option value="hygiene">Hygiène</option>
+                                <option value="maji">Maji</option>
+                                <option value="alcools">Alcools</option>
+                                <option value="paniers">Paniers cadeaux</option>
+                                <option value="tabac">Cigares / Cigarettes / Chicha</option>
+                                <option value="insecticides">Insecticides</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label for="editProductDesc" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Description</label>
+                            <textarea id="editProductDesc" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box; min-height: 100px;"></textarea>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label for="editProductImageFile" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Changer l'image (optionnel)</label>
+                            <input type="file" id="editProductImageFile" accept="image/*" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;">
+                            <div id="editImagePreview" style="margin-top: 1rem;">
+                                <p style="margin: 0 0 0.5rem 0; font-weight: 500;">Image actuelle :</p>
+                                <img id="currentProductImage" src="" alt="Image actuelle" style="max-width: 150px; border-radius: 0.25rem;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button 
+                                type="submit"
+                                class="btn btn-primary" 
+                                style="padding: 0.75rem 1.5rem; background-color: #22c55e; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                            >
+                                Enregistrer
+                            </button>
+                            <button 
+                                type="button"
+                                class="btn" 
+                                onclick="switchAdminTab('list')"
+                                style="padding: 0.75rem 1.5rem; background-color: #9ca3af; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </form>
+                    <div id="editProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500; margin-top: 1rem;"></div>
+                </div>
             </div>
         </div>
     `;
@@ -2820,6 +2944,11 @@ function switchAdminTab(tab) {
     // Afficher l'onglet sélectionné
     const tabContent = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
     if (tabContent) {
+        // Si on va sur l'onglet liste, on la rafraîchit
+        if (tab === 'list') {
+            const listContainer = document.getElementById('productsListContainer');
+            if (listContainer) listContainer.innerHTML = renderProductsList(products);
+        }
         tabContent.style.display = 'block';
     }
 }
@@ -2939,25 +3068,118 @@ async function handleAddProductSubmit(event) {
     }
 }
 
-// FONCTION: Supprimer un produit avec confirmation
-function deleteProduct(productId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
+// FONCTION: Remplir le formulaire d'édition
+function populateEditForm(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Afficher l'onglet d'édition
+    const editTabButton = document.querySelector(`.admin-tab-btn[onclick*="'edit'"]`);
+    if (editTabButton) editTabButton.style.display = 'inline-block';
+    switchAdminTab('edit');
+
+    // Remplir les champs
+    document.getElementById('editProductId').value = product.id;
+    document.getElementById('editProductName').value = product.name;
+    document.getElementById('editProductPrice').value = product.price;
+    document.getElementById('editProductCategory').value = product.category;
+    document.getElementById('editProductDesc').value = product.description || '';
+    document.getElementById('currentProductImage').src = product.image;
+
+    // Attacher l'écouteur pour la soumission du formulaire d'édition
+    const editForm = document.getElementById('editProductForm');
+    // On retire l'ancien écouteur pour éviter les duplications
+    editForm.removeEventListener('submit', handleEditProductSubmit);
+    editForm.addEventListener('submit', handleEditProductSubmit);
+}
+
+// FONCTION: Gérer la soumission du formulaire de modification
+async function handleEditProductSubmit(event) {
+    event.preventDefault();
+    const messageDiv = document.getElementById('editProductMessage');
+    messageDiv.textContent = '⏳ Mise à jour en cours...';
+    messageDiv.style.backgroundColor = '#dbeafe';
+    messageDiv.style.color = '#1e40af';
+    messageDiv.style.display = 'block';
+
+    const productId = document.getElementById('editProductId').value;
+    const imageFile = document.getElementById('editProductImageFile').files[0];
+
+    const updatedData = {
+        name: document.getElementById('editProductName').value,
+        price: parseFloat(document.getElementById('editProductPrice').value),
+        category: document.getElementById('editProductCategory').value,
+        description: document.getElementById('editProductDesc').value,
+    };
+
+    try {
+        // Si une nouvelle image est fournie, l'uploader
+        if (imageFile) {
+            const fileExtension = imageFile.name.split('.').pop();
+            const storagePath = `products/${productId}_${Date.now()}.${fileExtension}`;
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage.from('products').upload(storagePath, imageFile);
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = supabase.storage.from('products').getPublicUrl(storagePath);
+            updatedData.image = urlData.publicUrl;
+        }
+
+        // Mettre à jour dans Supabase
+        await updateProductInSupabase(productId, updatedData);
+
+        // Mettre à jour dans la liste locale
+        const productIndex = products.findIndex(p => p.id === productId);
+        if (productIndex > -1) {
+            products[productIndex] = { ...products[productIndex], ...updatedData };
+        }
+
+        messageDiv.textContent = '✅ Produit mis à jour avec succès !';
+        messageDiv.style.backgroundColor = '#dcfce7';
+        messageDiv.style.color = '#166534';
+
+        setTimeout(() => {
+            switchAdminTab('list');
+            const editTabButton = document.querySelector(`.admin-tab-btn[onclick*="'edit'"]`);
+            if (editTabButton) editTabButton.style.display = 'none';
+        }, 1500);
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du produit:", error);
+        messageDiv.textContent = `❌ Erreur: ${error.message}`;
+        messageDiv.style.backgroundColor = '#fee2e2';
+        messageDiv.style.color = '#991b1b';
+    }
+}
+
+// FONCTION: Supprimer un produit
+async function deleteProduct(productId) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer le produit ID: ${productId} ? Cette action est irréversible.`)) {
         return;
     }
 
-    // Retirer des produits personnalisés dans le localStorage
-    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-    customProducts = customProducts.filter(p => p.id !== productId);
-    setSafeLocalStorage('customProducts', customProducts);
+    try {
+        // Supprimer de Supabase
+        await deleteProductFromSupabase(productId);
 
-    // Retirer de l'array products
-    const index = products.findIndex(p => p.id === productId);
-    if (index > -1) {
-        products.splice(index, 1);
+        // Supprimer de la liste locale
+        const index = products.findIndex(p => p.id === productId);
+        if (index > -1) {
+            products.splice(index, 1);
+        }
+
+        // Rafraîchir la liste affichée
+        const listContainer = document.getElementById('productsListContainer');
+        if (listContainer) {
+            listContainer.innerHTML = renderProductsList(products);
+        }
+
+        alert('Produit supprimé avec succès !');
+
+    } catch (error) {
+        console.error("Erreur lors de la suppression du produit:", error);
+        alert(`❌ Erreur lors de la suppression: ${error.message}`);
     }
-
-    // Rafraîchir le tableau de bord admin
-    navigateTo('admin');
 }
 
 // FONCTION: Déconnecter l'admin
