@@ -2688,9 +2688,10 @@ function renderAdminDashboard() {
                         <input 
                             type="text" 
                             id="productImage"
-                            placeholder="Ex: https://example.com/image.jpg"
+                            placeholder="Ex: https://i.imgur.com/abcd123.jpg"
                             style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
                         >
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">Astuce: hébergez l'image sur Imgur puis collez le lien ici pour qu'elle soit visible partout.</small>
                     </div>
 
                     <div style="margin-bottom: 2rem;">
@@ -3037,6 +3038,27 @@ document.addEventListener('change', (e) => {
 });
 
 // FONCTION: Ajouter un nouveau produit (avec validation)
+// Live preview when admin pastes an image URL (Imgur or other)
+document.addEventListener('input', (e) => {
+    if (e.target && e.target.id === 'productImage') {
+        const url = e.target.value.trim();
+        const previewImg = document.getElementById('previewImg');
+        const imagePreview = document.getElementById('imagePreview');
+        if (!previewImg || !imagePreview) return;
+        if (!url) { previewImg.src = ''; imagePreview.style.display = 'none'; return; }
+
+        if (/^https?:\/\//i.test(url)) {
+            previewImg.src = url;
+            imagePreview.style.display = 'block';
+            previewImg.onerror = () => { previewImg.src = 'https://via.placeholder.com/200'; };
+        } else if (url.startsWith('data:')) {
+            previewImg.src = url;
+            imagePreview.style.display = 'block';
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    }
+});
 function addNewProduct() {
     const nameInput = document.getElementById('productName');
     const priceInput = document.getElementById('productPrice');
