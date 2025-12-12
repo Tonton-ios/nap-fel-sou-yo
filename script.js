@@ -38,8 +38,7 @@ async function uploadToImgur(file) {
   const data = await response.json();
 
   if (!data.success) {
-    alert("Erreur upload image");
-    throw new Error("Erreur Imgur");
+    throw new Error(`Erreur lors de l'upload sur Imgur: ${data.data.error}`);
   }
 
   return data.data.link; // Lien direct de l’image
@@ -3138,7 +3137,7 @@ async function handleAddProductSubmit(event) {
 
     // Validation des champs obligatoires
     if (!name || !price || !category || !file) {
-        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
+        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires et sélectionner une image.';
         messageDiv.style.backgroundColor = '#fee2e2';
         messageDiv.style.color = '#991b1b';
         messageDiv.style.display = 'block';
@@ -3213,7 +3212,7 @@ async function handleAddProductSubmit(event) {
 
     } catch (error) {
         console.error("Erreur lors de l'ajout du produit:", error);
-        messageDiv.textContent = `❌ Erreur: ${error.message}`;
+        messageDiv.textContent = `❌ Erreur lors de l'ajout: ${error.message}`;
         messageDiv.style.backgroundColor = '#fee2e2';
         messageDiv.style.color = '#991b1b';
     }
