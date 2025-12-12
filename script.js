@@ -79,9 +79,7 @@ const categories = [
     { id: 'alcools', name: 'Alcools', image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400' },
     { id: 'paniers', name: 'Paniers cadeaux', image: 'https://images.unsplash.com/photo-1558486012-817176f84c6d?w=400' },
     { id: 'tabac', name: 'Cigares / Cigarettes / Chicha', image: 'https://images.unsplash.com/photo-1594717527116-4b5b8c9a9146?w=400' },
-    //{ id: 'bebe', name: 'Produits bébé', image: 'https://images.unsplash.com/photo-1619045207244-5a4fdecc9616?w=400' },
     { id: 'insecticides', name: 'Insecticides', image: 'https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=400' },
-    //{ id: 'kits', name: 'Kits alimentaires', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400' },––
 ];
 
 // Products Data
@@ -294,7 +292,7 @@ const products = [
     //{ id: 'p57', name: 'Bon Coeur Corn Flakes Gros', price: 200, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
     //{ id: 'p58', name: 'Bon Coeur Corn Flakes Petit', price: 100, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
     //{ id: 'p59', name: 'Bon Coeur Chip', price: 50, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
-    { id: 'p60', name: 'Fritos Original 42.5G', price: 140, category: 'alimentaires', image: 'fritosorigcornchips.jpg' },
+    { id: 'p60', name: 'Fritos Original 42.5G', price: 140, category: 'alimentaires', image: 'alimen/fritosorigcornchips.jpg' },
     { id: 'p61', name: 'Cheetos Crunchy 35.4G', price: 140, category: 'alimentaires', image: 'alimen/cheetoscrunchy150g.jpg' },
     { id: 'p62', name: 'Crunchitos Fromage Cheddar', price: 25, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
     { id: 'p63', name: 'Lay\'s Classic 28.3G', price: 120, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
@@ -364,11 +362,11 @@ const products = [
     { id: 'p127', name: 'Crakenas (Club) 192g', price: 125, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p128', name: 'Cream (Sandwich Cookies) 350g', price: 200, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p129', name: 'Bonbon Bum Strawberry', price: 400, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
-    { id: 'p130', name: 'Bonbon Bongu Cheese', price: 250, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
-    { id: 'p131', name: 'Casino (Sabor Alfajor) 258g', price: 200, category: 'alimentaires', image: 'casinoalfajor.jpg' },
+    { id: 'p130', name: 'Bonbon Bongu Cheese', price: 250, category: 'alimentaires', image: 'alimen/bongusandwichfromage.jpg' },
+    { id: 'p131', name: 'Casino (Sabor Alfajor) 258g', price: 200, category: 'alimentaires', image: 'alimen/casinoalfajor.jpg' },
    // { id: 'p132', name: 'Beurre D\'arachide', price: 700, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p133', name: 'Trio', price: 185, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
-    { id: 'p134', name: 'Trio 4 Crema 336g', price: 185, category: 'alimentaires', image: 'trio4.jpg' },
+    { id: 'p134', name: 'Trio 4 Crema 336g', price: 185, category: 'alimentaires', image: 'alimen/trio4.jpg' },
     { id: 'p135', name: 'Corn Flakes Bongu 510g', price: 320, category: 'alimentaires', image: 'alimen/bongoucornflakes.jpg' },
     { id: 'p136', name: 'Casino Bonbon Fraise 258g', price: 200, category: 'alimentaires', image: 'alimen/casinofresa.jpg' },
     //{ id: 'p137', name: 'Big Bom (Mango) 18g', price: 205, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
@@ -378,8 +376,8 @@ const products = [
     { id: 'p141', name: 'Pop Boom 408g', price: 400, category: 'alimentaires', image: 'alimen/popboom.jpg' },
     { id: 'p142', name: 'J&J Vinegar 16oz', price: 50, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p143', name: 'Pois Beurre Petit', price: 650, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
-    //{ id: 'p144', name: 'Pois Lentilles', price: 650, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
-    { id: 'p145', name: 'Lasagna Pincesa 400g', price: 450, category: 'alimentaires', image: 'princes.jpg' },
+    { id: 'p144', name: 'Pois Lentilles', price: 650, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
+    { id: 'p145', name: 'Lasagna Princesa 400g', price: 450, category: 'alimentaires', image: 'alimen/princes.jpg' },
     //{ id: 'p146', name: 'Manba Bon Coeur Gros', price: 1250, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     //{ id: 'p147', name: 'Pois Beurre Gros', price: 1560, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p148', name: 'Famosa Ketchup Unite', price: 30, category: 'alimentaires', image: 'alimen/famosasachè.jpg' },
@@ -549,7 +547,7 @@ const products = [
     //{ id: 'p312', name: 'Diri peyi', price: 850, category: 'alimentaires', image: '' },
     //{ id: 'p313', name: 'Makaroni bongu', price: 995, category: 'alimentaires', image: '' },
     //{ id: 'p314', name: 'TI MALICE (BEURRE DE CUISINE) 14 g', price: 65, category: 'alimentaires', image: '' },
-    { id: 'p315', name: 'Chicolac 15 g', price: 25, category: 'alimentaires', image: 'alimen/' },
+    { id: 'p315', name: 'Chicolac 15 g', price: 25, category: 'alimentaires', image: 'https://via.placeholder.com/400' },
     //{ id: 'p316', name: 'Kanel', price: 50, category: 'alimentaires', image: '' },
     //{ id: 'p317', name: 'Hot dog avivar', price: 170, category: 'alimentaires', image: '' },
     //{ id: 'p318', name: 'Corora viande', price: 500, category: 'alimentaires', image: '' },
@@ -692,7 +690,7 @@ const products = [
     { id: 'p455', name: 'Green-Land (Instantane) 400g', price: 850, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p456', name: 'Gallia (2) 400g', price: 1300, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p457', name: 'Nursie 0-6 Mois Petit 400g', price: 1100, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
-    { id: 'p458', name: 'Pascual (Vanilla) 120g', price: 125, category: 'alimentaires', image: 'alimen/' },
+    { id: 'p458', name: 'Pascual (Vanilla) 120g', price: 125, category: 'alimentaires', image: 'alimen/IMG_3167.WEBP' },
     //{ id: 'p459', name: 'Pascual (Yogikids) 125g', price: 125, category: 'alimentaires', image: 'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400' },
     { id: 'p460', name: 'Green-Land (Instantane) 2500g', price: 3920, category: 'alimentaires', image: 'alimen/IMG_3201.JPG' },
     { id: 'p461', name: 'Pascual (Macedonia) 125g', price: 125, category: 'alimentaires', image: 'alimen/IMG_3200.JPG' },
@@ -827,7 +825,7 @@ const products = [
     { id: 'c111', name: 'YARA TOUS', price: 300.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c112', name: 'SPEED STICK FRESH', price: 750.00, category: 'cosmetiques', image: 'Pr_cos/speedfresh.JPG' },
     { id: 'c113', name: 'SPEED STICK POWER SPORT', price: 750.00, category: 'cosmetiques', image: 'Pr_cos/speedsport.JPG' },
-    { id: 'c114', name: 'AXE APOLLO', price: 600.00, category: 'cosmetiques', image: 'Pr_cos/axeapollo.JPG' },
+    { id: 'c114', name: 'AXE APOLLO', price: 600.00, category: 'cosmetiques', image: 'pr_cos/axeapollo.JPG' },
     { id: 'c115', name: 'SPEED STICK REGULAR', price: 600.00, category: 'cosmetiques', image: 'Pr_cos/speedregular.JPG' },
     { id: 'c116', name: 'GILLETTE COOL WAVE', price: 750.00, category: 'cosmetiques', image: 'Pr_cos/gillete.JPG' },
     { id: 'c117', name: 'GILLETTE DRY COOL WAVE', price: 750.00, category: 'cosmetiques', image: 'Pr_cos/gillettewave.JPG' },
@@ -849,7 +847,7 @@ const products = [
     { id: 'c133', name: 'AXE ANARCHY DEO', price: 600.00, category: 'cosmetiques', image: 'Pr_cos/axeanachy.JPG' },
     { id: 'c134', name: 'LEXI HONEY SHAMPOO', price: 225.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c135', name: 'LEXI HONEY CONDITIONER', price: 225.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
-    { id: 'c136', name: 'AXE PHOENIX', price: 600.00, category: 'cosmetiques', image: 'Pr_cos/axephoenix.JPG' },
+    { id: 'c136', name: 'AXE PHOENIX', price: 600.00, category: 'cosmetiques', image: 'pr_cos/axephoenix.JPG' },
     { id: 'c137', name: 'BIEN-ETRE THE AMBRE 250ML', price: 1400.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c138', name: 'REXONA (SEXY BOUQUET) 150 ml', price: 375.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c139', name: 'DOVE (TONO UNIFORME COCO) 150 ml', price: 375.00, category: 'cosmetiques', image: 'Pr_cos/dovecoco.JPG' },
@@ -875,7 +873,7 @@ const products = [
     { id: 'c159', name: 'BLEU MAGIC CONDITIONNER 340 g', price: 530.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c160', name: 'TCB HAIR RELAXER 510 g', price: 570.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c161', name: 'NATURAL TEXTURIZER HAIR SOFTENE', price: 700.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
-    { id: 'c162', name: 'OLIVE OIL FULL AP EXTRA STRENGT', price: 1025.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
+    { id: 'c162', name: 'OLIVE OIL FULL AP EXTRA STRENGTH', price: 1025.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c163', name: 'SCURL TEXTURIZER CREME 425 g', price: 1055.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c164', name: 'BLUE MAGIC OLIVE OIL 340 g', price: 530.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c165', name: 'ACTIMED (NIGHT) 150 ml', price: 150.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
@@ -936,7 +934,7 @@ const products = [
     { id: 'c220', name: 'ACTIMED (SECRET POWDER) 80 ml', price: 115.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c221', name: 'ACTIMED (COOL SUMMER) 80 ml', price: 115.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c222', name: 'CURL SHOW STYLE MILK 16OZ', price: 1135.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
-    { id: 'c223', name: 'WHITE RAM SHAMPOO(APPLE BLOSSOM 443 ml', price: 350.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
+    { id: 'c223', name: 'WHITE RAIN SHAMPOO(APPLE BLOSSOM) 443 ml', price: 350.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c224', name: 'WHITE RAM SHAMPOO(OCEAN MIST) 443ML', price: 350.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c225', name: 'OLIVE OIL SPRAY 10oz', price: 785.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c226', name: 'BOOUS HOME BOOUS 35ML 35 ML', price: 125.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
@@ -1000,7 +998,7 @@ const products = [
     { id: 'c284', name: 'BABY DREAM BATH', price: 490.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c285', name: 'BABY SOFT LOTION', price: 490.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c286', name: 'BABY SHAMPOO', price: 490.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
-    { id: 'c287', name: 'COTON BALLS WHITE RAIN', price: 285.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
+    { id: 'c287', name: 'COTTON BALLS WHITE RAIN', price: 285.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c288', name: 'COTON BALLS PURELY', price: 285.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c289', name: 'DOUBLE TIPPED', price: 405.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c290', name: 'COTON BALLS SIMPLY', price: 245.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
@@ -1053,7 +1051,7 @@ const products = [
     { id: 'c337', name: 'BOD MAN MOST WANTED 8FL OZ', price: 710.00, category: 'cosmetiques', image: '' },
     { id: 'c338', name: 'BOD MAN DIAMOND CROWN 8FL OZ/236', price: 710.00, category: 'cosmetiques', image: 'Pr_cos/boddiamond.JPG' },
     { id: 'c339', name: 'CINTHOL LIME FRESH', price: 145.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
-    { id: 'c340', name: 'CINTHOL DEO SOAN COLOGNE', price: 145.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
+    { id: 'c340', name: 'CINTHOL DEO SOAP COLOGNE', price: 145.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c341', name: 'CINTHOL DEO SOAP', price: 1454.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
     { id: 'c342', name: 'BOD MAN FRESH GUY 8 FL OZ', price: 710.00, category: 'cosmetiques', image: 'bodfreshguy.JPG' },
     { id: 'c343', name: 'FLORIDA WATER 221 ML', price: 800.00, category: 'cosmetiques', image: 'https://source.unsplash.com/600x600/?cosmetics' },
@@ -1207,7 +1205,7 @@ const products = [
     { id: 'mj5', name: 'SAINT JOSEPH', price: 185.00, category: 'maji', image: 'Pr_maji/saintjozef.PNG' },
     { id: 'mj6', name: 'Saint Anne ', price: 185.00, category: 'maji', image: 'Pr_maji/Saintanne.PNG' },
     { id: 'mj7', name: 'NOTRE DAME DU PERPETUEL SECOURS ', price: 370.00, category: 'maji', image: 'Pr_maji/notredamealtaga.PNG' },
-    { id: 'mj8', name: 'Saint Anne ', price: 370.00, category: 'maji', image: 'Saintanne.PNG' },
+    { id: 'mj8', name: 'Saint Anne ', price: 370.00, category: 'maji', image: 'Pr_maji/Saintanne.PNG' },
     { id: 'mj18', name: 'SACRE COEUR DE JESUS', price: 365.00, category: 'maji', image: 'Pr_maji/SAKREKÈJEZI.jpeg' },
 
 
@@ -1224,7 +1222,7 @@ const products = [
     { id: 'g9', name: 'CANADA DRY CLUB SODA', price: '200.00', category: 'glaces', image: 'Pr_glace/clubsoda.JPG' },
     { id: 'g10', name: 'SPRITE', price: '100.00', category: 'glaces', image: 'Pr_glace/sprite.JPG' },
     { id: 'g11', name: 'CERESER 0% ALCOOL', price: '200.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
-    { id: 'g12', name: 'MULIK VANILA', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
+    { id: 'g12', name: 'MULIK VANILA', price: '275.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g13', name: 'SPARKLING (WATERMELON)', price: '150.00', category: 'glaces', image: 'Pr_glace/spawatermelon.JPG' },
     { id: 'g14', name: 'SPARKLING STRAWBERRY', price: '150.00', category: 'glaces', image: 'Pr_glace/spastraw.JPG' },
     { id: 'g15', name: 'BECKS', price: '', category: 'glaces', image: 'Pr_glace/becks.JPG'},
@@ -1256,8 +1254,8 @@ const products = [
     { id: 'g41', name: 'VITA MALT GINGER BOTTLE', price: '200.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g42', name: 'ALOE VERA (STRAWBERRY)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloestraw.JPG' },
     { id: 'g43', name: 'ALOE VERA (SABORES)', price: '210.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
-    { id: 'g44', name: 'ALOE VERA (SANDIA)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloebebida' },
-    { id: 'g45', name: 'ALOE VERA (PUNCH)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloefruit'},
+    { id: 'g44', name: 'ALOE VERA (SANDIA)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloebebida.jpg' },
+    { id: 'g45', name: 'ALOE VERA (PUNCH)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloefruit.jpg'},
     { id: 'g46', name: 'ALOE VERA (MANGO)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloemango.JPG' },
     { id: 'g47', name: 'SPARKLING APPLE MANGO', price: '150.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g48', name: 'VITA MALT (GINGER)', price: '200.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
@@ -1268,7 +1266,7 @@ const products = [
     { id: 'g53', name: 'SPARKLING GOLD PEAR', price: '150.00', category: 'glaces', image: 'Pr_glace/spagold.jpg' },
     { id: 'g54', name: 'ENSURE CHOCOLAT', price: '375.00', category: 'glaces', image: 'Pr_glace/ensure.jpg' },
     { id: 'g55', name: 'HARBOE HYPER MALT CAN', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
-    { id: 'g56', name: 'CYCLONE 500 ML', price: '250.00', category: 'glaces', image: 'Pr_glace/ciclone.JPG' },
+    { id: 'g56', name: 'CYCLONE 500 ML', price: '250.00', category: 'glaces', image: 'Pr_glace/cyclone.JPG' },
     { id: 'g57', name: 'VITA MALT (ACAI)', price: '', category: 'glaces', image: 'Pr_glace/vitamaltacaijpg' },
     { id: 'g58', name: 'ALOE VERA (BEBIDA)', price: '', category: 'glaces', image: 'Pr_glace/aloebebida.jpg' },
     { id: 'g59', name: 'VITA MALT (CLASSIC NON ALC)', price: '200.00', category: 'glaces', image: 'Pr_glace/vitamalt.jpg' },
@@ -1277,7 +1275,7 @@ const products = [
     { id: 'g62', name: 'CICLON (ENERGY DRINK)', price: '300.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g63', name: 'ALOE VERA (DRINK)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloedrink.jpg' },
     //{ id: 'g64', name: 'VITA MALT (CLASSIC)', price: '115.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
-    { id: 'g65', name: 'POWER MALT (ORIGINAL)', price: '', category: 'glaces', image: 'Pr_glace/powermalt.jpg' },
+    { id: 'g65', name: 'POWER MALT (ORIGINAL)', price: '150.00', category: 'glaces', image: 'Pr_glace/powermalt.jpg' },
     { id: 'g66', name: 'VITA MALT (COCO)', price: '200.00', category: 'glaces', image: 'Pr_glace/vitamaltcoco.jpg' },
     { id: 'g67', name: 'ALOE VERA (SABORES PINA)', price: '210.00', category: 'glaces', image: 'Pr_glace/aloevera.JPG' },
     { id: 'g68', name: 'BONGU (POUDRE JUS)', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
@@ -1293,7 +1291,7 @@ const products = [
     { id: 'g78', name: 'ZUKO', price: '50.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g79', name: 'LITTLE HUG BLEUE', price: '85.00', category: 'glaces', image: 'Pr_glace/hugblue.jpg' },
     { id: 'g80', name: 'FARAGELLO GUAVA', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
-    { id: 'g81', name: 'TWIST POMME', price: '300.00', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
+    { id: 'g81', name: 'TWIST POMME', price: '300.00', category: 'glaces', image: 'Pr_glace/twistapple.jpg' },
     { id: 'g82', name: 'ABEST PEACH', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g83', name: 'ABEST MANGO', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g84', name: 'ABEST MIXED FRUIT', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
@@ -1301,7 +1299,7 @@ const products = [
     { id: 'g86', name: 'FRUIT HUG GATORADE', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g87', name: 'KOOL-AID JAMMERS GRAPE', price: '70.00', category: 'glaces', image: 'Pr_glace/koolaidgrape.jpg' },
     { id: 'g88', name: 'CERESER BERRY FRUIT (SANS)', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
-    { id: 'g89', name: 'KOOL-AID JAMMERS FRUIT PUNCH', price: '70.00', category: 'glaces', image: '' },
+    { id: 'g89', name: 'KOOL-AID JAMMERS FRUIT PUNCH', price: '70.00', category: 'glaces', image: 'Pr_glace/koolaidpunch.jpg' },
     { id: 'g90', name: 'BOPPI PEACH CARROT', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g91', name: 'BOPPI ORANGE CARROT', price: '', category: 'glaces', image: 'https://images.unsplash.com/photo-1554866585-51a9e2ec6a4f?w=400' },
     { id: 'g92', name: 'TWIST COCKTAIL', price: '', category: 'glaces', image: 'Pr_glace/twistcock.jpg' },
@@ -2545,8 +2543,7 @@ function attachPaymentListeners() {
 // Cette section contient tout le système d'administration pour gérer les produits
 
 // Variables globales pour le système admin
-let adminPassword = localStorage.getItem('adminPassword') || 'admin123';
-let isAdminLoggedIn = false;
+let adminUser = null;
 let editingProductId = null;
 
 // FONCTION: Afficher la page de connexion admin
@@ -2556,64 +2553,78 @@ function renderAdminLoginPage() {
             <div class="container" style="max-width: 500px;">
                 <div style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                     <h1 style="text-align: center; margin-bottom: 2rem; color: #dc2626;">🔐 Accès Admin</h1>
-                    <p style="text-align: center; margin-bottom: 2rem; color: #666;">Entrez le mot de passe pour accéder à l'espace administrateur</p>
+                    <p style="text-align: center; margin-bottom: 2rem; color: #666;">Connectez-vous pour accéder à l'espace administrateur.</p>
                     
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Mot de passe admin</label>
-                        <input 
-                            type="password" 
-                            id="adminPasswordInput" 
-                            placeholder="Entrez le mot de passe"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; font-size: 1rem; box-sizing: border-box;"
-                            onkeypress="if(event.key==='Enter') loginAdmin()"
+                    <form id="adminLoginForm">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="adminEmail" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Email</label>
+                            <input 
+                                type="email" 
+                                id="adminEmail" 
+                                placeholder="admin@example.com"
+                                required
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; font-size: 1rem; box-sizing: border-box;"
+                            >
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="adminPassword" style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Mot de passe</label>
+                            <input 
+                                type="password" 
+                                id="adminPassword" 
+                                placeholder="Entrez votre mot de passe"
+                                required
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; font-size: 1rem; box-sizing: border-box;"
+                            >
+                        </div>
+                        <div id="adminLoginError" style="color: #dc2626; margin-top: 0.5rem; font-size: 0.875rem; display: none; margin-bottom: 1rem; text-align: center;"></div>
+                        
+                        <button 
+                            type="submit"
+                            class="btn btn-primary" 
+                            style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 1rem; font-weight: 500;"
                         >
-                        <div id="adminLoginError" style="color: #dc2626; margin-top: 0.5rem; font-size: 0.875rem; display: none;"></div>
-                    </div>
-                    
-                    <button 
-                        class="btn btn-primary" 
-                        onclick="loginAdmin()"
-                        style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 1rem; font-weight: 500;"
-                    >
-                        Se connecter
-                    </button>
-                    
-                    <button 
-                        class="btn btn-secondary" 
-                        onclick="navigateTo('home')"
-                        style="width: 100%; padding: 0.75rem; background-color: #ccc; color: #333; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 1rem;"
-                    >
-                        Retour à l'accueil
-                    </button>
-
-                    <p style="text-align: center; margin-top: 2rem; color: #999; font-size: 0.875rem;">
-                        <strong>Mot de passe par défaut:</strong> admin123
-                    </p>
+                            Se connecter
+                        </button>
+                        
+                        <button 
+                            type="button"
+                            class="btn btn-secondary" 
+                            onclick="navigateTo('home')"
+                            style="width: 100%; padding: 0.75rem; background-color: #ccc; color: #333; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 1rem;"
+                        >
+                            Retour à l'accueil
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     `;
 }
 
-// FONCTION: Vérifier le mot de passe et connecter l'admin
-function loginAdmin() {
-    const passwordInput = document.getElementById('adminPasswordInput').value;
+// FONCTION: Vérifier l'email/mot de passe et connecter l'admin avec Supabase
+async function loginAdmin(event) {
+    event.preventDefault();
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
     const errorDiv = document.getElementById('adminLoginError');
     
-    if (passwordInput === adminPassword) {
-        isAdminLoggedIn = true;
-        navigateTo('admin');
-    } else {
-        errorDiv.textContent = '❌ Mot de passe incorrect';
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+
+    if (error) {
+        errorDiv.textContent = `❌ Erreur: ${error.message}`;
         errorDiv.style.display = 'block';
-        document.getElementById('adminPasswordInput').value = '';
-        document.getElementById('adminPasswordInput').focus();
+    } else {
+        adminUser = data.user;
+        navigateTo('admin');
     }
 }
 
 // FONCTION: Afficher le tableau de bord admin avec les onglets
 function renderAdminDashboard() {
-    if (!isAdminLoggedIn) {
+    if (!adminUser) {
         return renderAdminLoginPage();
     }
     
@@ -2622,7 +2633,7 @@ function renderAdminDashboard() {
             <div class="container" style="max-width: 1200px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                     <h1 style="color: #dc2626; margin: 0;">🛠️ Espace Administrateur</h1>
-                    <button 
+                    <button
                         class="btn" 
                         onclick="logoutAdmin()"
                         style="background-color: #666; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
@@ -2633,33 +2644,12 @@ function renderAdminDashboard() {
 
                 <!-- Onglets de navigation admin -->
                 <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd;">
-                    <button 
-                        class="admin-tab-btn active" 
+                    <button
+                        class="admin-tab-btn active"
                         onclick="switchAdminTab('add')"
                         style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
                     >
                         Ajouter un produit
-                    </button>
-                    <button 
-                        class="admin-tab-btn" 
-                        onclick="switchAdminTab('list')"
-                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
-                    >
-                        Gestion des produits
-                    </button>
-                    <button 
-                        class="admin-tab-btn" 
-                        onclick="switchAdminTab('edit')"
-                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
-                    >
-                        Modifier un produit
-                    </button>
-                    <button 
-                        class="admin-tab-btn" 
-                        onclick="switchAdminTab('settings')"
-                        style="padding: 1rem; background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 500; border-bottom: 3px solid transparent; color: #666;"
-                    >
-                        Paramètres
                     </button>
                 </div>
 
@@ -2760,136 +2750,6 @@ function renderAdminDashboard() {
 
                     <div id="addProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500;"></div>
                 </div>
-
-                <!-- Onglet 2: Gestion des produits existants -->
-                <div id="adminTabList" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
-                    <h2 style="color: #333; margin-top: 0;">Gestion des produits (${products.length} produits au total)</h2>
-                    
-                    <div id="productsList" style="max-height: 700px; overflow-y: auto;">
-                        Chargement...
-                    </div>
-                </div>
-
-                <!-- Onglet 2b: Modifier un produit existant -->
-                <div id="adminTabEdit" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
-                    <h2 style="color: #333; margin-top: 0;">Modifier un produit existant</h2>
-                    <p style="color: #666; margin-bottom: 2rem;">Cliquez sur "Modifier" dans l'onglet "Gestion des produits" pour sélectionner un produit à modifier.</p>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit</label>
-                            <input 
-                                type="text" 
-                                id="editProductName"
-                                placeholder="Ex: Jus Orange"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS)</label>
-                            <input 
-                                type="number" 
-                                id="editProductPrice"
-                                placeholder="Ex: 150"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                            >
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie</label>
-                        <select 
-                            id="editProductCategory"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                        >
-                            <option value="">Sélectionner une catégorie</option>
-                            <option value="alimentaires">Produits alimentaires</option>
-                            <option value="glaces">Produits glacés</option>
-                            <option value="menagers">Produits ménagers</option>
-                            <option value="cosmetiques">Cosmétiques</option>
-                            <option value="parfums">Parfums</option>
-                            <option value="bijoux">Bijoux</option>
-                            <option value="cartes">Cartes de vœux</option>
-                            <option value="hygiene">Hygiène</option>
-                            <option value="maji">Maji</option>
-                            <option value="alcools">Alcools</option>
-                            <option value="paniers">Paniers cadeaux</option>
-                            <option value="tabac">Cigares / Cigarettes / Chicha</option>
-                            <option value="insecticides">Insecticides</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">URL de l'image</label>
-                        <input 
-                            type="text" 
-                            id="editProductImage"
-                            placeholder="Ex: https://example.com/image.jpg"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                        >
-                    </div>
-
-                    <div id="editImagePreview" style="margin-bottom: 1rem; display: none;">
-                        <p style="color: #333; font-weight: 500; margin-bottom: 0.5rem;">Aperçu:</p>
-                        <img id="editPreviewImg" src="" alt="Aperçu" style="max-width: 200px; border-radius: 0.25rem;">
-                    </div>
-
-                    <div style="display: flex; gap: 1rem;">
-                        <button 
-                            class="btn btn-primary" 
-                            onclick="saveProductEdit()"
-                            style="padding: 0.75rem 1rem; background-color: #22c55e; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
-                        >
-                            Enregistrer les modifications
-                        </button>
-                        <button 
-                            class="btn" 
-                            onclick="cancelEditProduct()"
-                            style="padding: 0.75rem 1rem; background-color: #9ca3af; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
-                        >
-                            Annuler
-                        </button>
-                    </div>
-
-                    <div id="editProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500; margin-top: 1rem;"></div>
-                </div>
-
-                <!-- Onglet 3: Paramètres admin -->
-                <div id="adminTabSettings" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
-                    <h2 style="color: #333; margin-top: 0;">Paramètres</h2>
-                    
-                    <div style="margin-bottom: 2rem; padding: 1rem; background-color: #f0f0f0; border-radius: 0.25rem;">
-                        <h3 style="color: #333; margin-top: 0;">Changer le mot de passe admin</h3>
-                        <p style="color: #666;">Mot de passe actuel: <strong>${adminPassword}</strong></p>
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nouveau mot de passe</label>
-                            <input 
-                                type="password" 
-                                id="newAdminPassword"
-                                placeholder="Entrez le nouveau mot de passe"
-                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                            >
-                        </div>
-
-                        <button 
-                            class="btn btn-primary" 
-                            onclick="changeAdminPassword()"
-                            style="padding: 0.75rem 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
-                        >
-                            Mettre à jour le mot de passe
-                        </button>
-
-                        <div id="passwordChangeMessage" style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500;"></div>
-                    </div>
-
-                    <div style="margin-bottom: 2rem; padding: 1rem; background-color: #f0f0f0; border-radius: 0.25rem;">
-                        <h3 style="color: #333; margin-top: 0;">📊 Statistiques</h3>
-                        <p style="color: #666;">Total des produits: <strong>${products.length}</strong></p>
-                        <p style="color: #666;">Produits personnalisés: <strong>${JSON.parse(localStorage.getItem('customProducts') || '[]').length}</strong></p>
-                    </div>
-                </div>
             </div>
         </div>
     `;
@@ -2942,140 +2802,29 @@ function renderProductsList(allProducts) {
 // FONCTION: Basculer entre les onglets admin
 function switchAdminTab(tab) {
     // Masquer tous les onglets
-    document.getElementById('adminTabAdd').style.display = 'none';
-    document.getElementById('adminTabList').style.display = 'none';
-    document.getElementById('adminTabEdit').style.display = 'none';
-    document.getElementById('adminTabSettings').style.display = 'none';
-    
+    document.querySelectorAll('[id^="adminTab"]').forEach(el => el.style.display = 'none');
+
     // Enlever la classe active de tous les boutons
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.style.borderBottomColor = 'transparent';
         btn.style.color = '#666';
     });
-    
-    // Afficher l'onglet sélectionné
-    if (tab === 'add') {
-        document.getElementById('adminTabAdd').style.display = 'block';
-    } else if (tab === 'list') {
-        document.getElementById('adminTabList').style.display = 'block';
-        // Charger la liste des produits
-        const productsList = document.getElementById('productsList');
-        productsList.innerHTML = renderProductsList(products);
-    } else if (tab === 'edit') {
-        document.getElementById('adminTabEdit').style.display = 'block';
-    } else if (tab === 'settings') {
-        document.getElementById('adminTabSettings').style.display = 'block';
-    }
-    
+
     // Marquer le bouton comme actif
-    event.target.style.borderBottomColor = '#dc2626';
-    event.target.style.color = '#dc2626';
+    const clickedButton = document.querySelector(`.admin-tab-btn[onclick*="'${tab}'"]`);
+    if (clickedButton) {
+        clickedButton.style.borderBottomColor = '#dc2626';
+        clickedButton.style.color = '#dc2626';
+    }
+
+    // Afficher l'onglet sélectionné
+    const tabContent = document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+    if (tabContent) {
+        tabContent.style.display = 'block';
+    }
 }
 
 // ÉVÉNEMENT: Gérer l'upload d'image depuis le fichier
-document.addEventListener('change', (e) => {
-    if (e.target.id === 'productImageFile') {
-        const file = e.target.files[0];
-        if (file) {
-            const imageInput = document.getElementById('productImage');
-            const previewImg = document.getElementById('previewImg');
-            const imagePreview = document.getElementById('imagePreview');
-            const messageDiv = document.getElementById('addProductMessage');
-            
-            if (!imageInput || !previewImg || !imagePreview) return;
-            
-            // Compresser l'image
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = async function() {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    // Réduire la taille
-                    const maxWidth = 800;
-                    const maxHeight = 600;
-                    
-                    if (width > maxWidth || height > maxHeight) {
-                        const ratio = Math.min(maxWidth / width, maxHeight / height);
-                        width = Math.round(width * ratio);
-                        height = Math.round(height * ratio);
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d', { alpha: false });
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Compresser
-                    let quality = 0.7;
-                    let compressedBase64 = canvas.toDataURL('image/jpeg', quality);
-                    
-                    while (compressedBase64.length > 300000 && quality > 0.3) {
-                        quality -= 0.1;
-                        compressedBase64 = canvas.toDataURL('image/jpeg', quality);
-                    }
-                    
-                    // Afficher l'aperçu
-                    previewImg.src = compressedBase64;
-                    imagePreview.style.display = 'block';
-                    
-                    // Upload vers imgbb (API gratuite)
-                    if (messageDiv) {
-                        messageDiv.textContent = '⏳ Upload de l\'image...';
-                        messageDiv.style.backgroundColor = '#dbeafe';
-                        messageDiv.style.color = '#1e40af';
-                        messageDiv.style.display = 'block';
-                    }
-                    
-                    try {
-                        const formData = new FormData();
-                        formData.append('image', compressedBase64.split(',')[1]);
-                        formData.append('key', '9c1bad1849c63cba25f86c0a87c22ed7');
-                        
-                        const response = await fetch('https://api.imgbb.com/1/upload', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            const imageUrl = data.data.url;
-                            imageInput.value = imageUrl;
-                            imageInput.setAttribute('data-firebase-url', imageUrl);
-                            previewImg.src = imageUrl;
-                            
-                            if (messageDiv) {
-                                messageDiv.textContent = '✅ Image uploadée!';
-                                messageDiv.style.backgroundColor = '#d1fae5';
-                                messageDiv.style.color = '#065f46';
-                                setTimeout(() => messageDiv.style.display = 'none', 2000);
-                            }
-                        } else {
-                            throw new Error('Upload failed');
-                        }
-                    } catch (error) {
-                        console.error('Erreur upload:', error);
-                        // Fallback: garder le base64
-                        imageInput.value = compressedBase64;
-                        imageInput.setAttribute('data-base64', compressedBase64);
-                        
-                        if (messageDiv) {
-                            messageDiv.textContent = '✅ Image prête (stockage local)';
-                            messageDiv.style.backgroundColor = '#dbeafe';
-                            messageDiv.style.color = '#1e40af';
-                            setTimeout(() => messageDiv.style.display = 'none', 2000);
-                        }
-                    }
-                };
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-});
 
 async function handleAddProductSubmit(event) {
     event.preventDefault();
@@ -3211,191 +2960,11 @@ function deleteProduct(productId) {
     navigateTo('admin');
 }
 
-// FONCTION: Modifier un produit existant
-function editProduct(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    // Remplir le formulaire d'édition avec les données actuelles
-    editingProductId = productId;
-    
-    // Attendre que les éléments soient disponibles
-    setTimeout(() => {
-        const nameInput = document.getElementById('editProductName');
-        const priceInput = document.getElementById('editProductPrice');
-        const categoryInput = document.getElementById('editProductCategory');
-        const imageInput = document.getElementById('editProductImage');
-        const editPreviewImg = document.getElementById('editPreviewImg');
-        const editImagePreview = document.getElementById('editImagePreview');
-        
-        if (nameInput && priceInput && categoryInput && imageInput) {
-            nameInput.value = product.name;
-            priceInput.value = product.price;
-            categoryInput.value = product.category;
-            imageInput.value = product.image;
-            
-            // Afficher l'aperçu de l'image actuelle
-            if (editPreviewImg && editImagePreview) {
-                editPreviewImg.src = product.image;
-                editImagePreview.style.display = 'block';
-            }
-            
-            // Scroller vers le formulaire d'édition
-            const editForm = document.getElementById('adminTabEdit');
-            if (editForm) {
-                editForm.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    }, 100);
-}
-
-// FONCTION: Sauvegarder les modifications du produit
-function saveProductEdit() {
-    if (!editingProductId) {
-        alert('Aucun produit sélectionné pour modification');
-        return;
-    }
-
-    const nameInput = document.getElementById('editProductName');
-    const priceInput = document.getElementById('editProductPrice');
-    const categoryInput = document.getElementById('editProductCategory');
-    const imageInput = document.getElementById('editProductImage');
-    const messageDiv = document.getElementById('editProductMessage');
-
-    if (!nameInput || !priceInput || !categoryInput || !messageDiv) {
-        return;
-    }
-
-    const name = nameInput.value.trim();
-    const price = parseFloat(priceInput.value);
-    const category = categoryInput.value;
-    let image = imageInput ? imageInput.value.trim() : '';
-
-    // Validation
-    if (!name || !price || !category) {
-        messageDiv.textContent = '❌ Veuillez remplir tous les champs obligatoires';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-
-    if (isNaN(price) || price < 0) {
-        messageDiv.textContent = '❌ Le prix doit être un nombre valide';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-
-    // Trouver et mettre à jour le produit dans l'array
-    const productIndex = products.findIndex(p => p.id === editingProductId);
-    if (productIndex > -1) {
-        products[productIndex].name = name;
-        products[productIndex].price = price;
-        products[productIndex].category = category;
-        products[productIndex].image = image || 'https://via.placeholder.com/400';
-    }
-
-    // Mettre à jour dans le localStorage si c'est un produit personnalisé
-    let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-    const customIndex = customProducts.findIndex(p => p.id === editingProductId);
-    if (customIndex > -1) {
-        customProducts[customIndex].name = name;
-        customProducts[customIndex].price = price;
-        customProducts[customIndex].category = category;
-        customProducts[customIndex].image = image || 'https://via.placeholder.com/400';
-        
-        // Sauvegarder avec gestion des erreurs
-        const saveSuccess = setSafeLocalStorage('customProducts', customProducts);
-        
-        if (!saveSuccess) {
-            messageDiv.textContent = '⚠️ Les données n\'ont pas pu être sauvegardées complètement. Utilisez des URLs d\'images externes.';
-            messageDiv.style.backgroundColor = '#fffbeb';
-            messageDiv.style.color = '#92400e';
-            messageDiv.style.display = 'block';
-            return;
-        }
-    }
-
-    // Message de succès
-    messageDiv.textContent = '✅ Produit modifié avec succès!';
-    messageDiv.style.backgroundColor = '#efe';
-    messageDiv.style.color = '#060';
-    messageDiv.style.display = 'block';
-
-    // Réinitialiser le formulaire
-    editingProductId = null;
-    nameInput.value = '';
-    priceInput.value = '';
-    categoryInput.value = '';
-    if (imageInput) imageInput.value = '';
-    document.getElementById('editImagePreview').style.display = 'none';
-
-    // Masquer le message après 3 secondes et rafraîchir
-    setTimeout(() => {
-        messageDiv.style.display = 'none';
-        navigateTo('admin');
-    }, 3000);
-}
-
-// FONCTION: Annuler la modification
-function cancelEditProduct() {
-    editingProductId = null;
-    document.getElementById('editProductName').value = '';
-    document.getElementById('editProductPrice').value = '';
-    document.getElementById('editProductCategory').value = '';
-    document.getElementById('editProductImage').value = '';
-    document.getElementById('editImagePreview').style.display = 'none';
-    document.getElementById('adminTabEdit').style.display = 'none';
-}
-
-// FONCTION: Changer le mot de passe admin
-function changeAdminPassword() {
-    const newPassword = document.getElementById('newAdminPassword').value.trim();
-    const messageDiv = document.getElementById('passwordChangeMessage');
-
-    // Validation du mot de passe
-    if (!newPassword) {
-        messageDiv.textContent = '❌ Veuillez entrer un nouveau mot de passe';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-
-    if (newPassword.length < 4) {
-        messageDiv.textContent = '❌ Le mot de passe doit contenir au moins 4 caractères';
-        messageDiv.style.backgroundColor = '#fee';
-        messageDiv.style.color = '#c00';
-        messageDiv.style.display = 'block';
-        return;
-    }
-
-    // Mettre à jour le mot de passe
-    adminPassword = newPassword;
-    setSafeLocalStorage('adminPassword', newPassword);
-
-    // Message de succès
-    messageDiv.textContent = '✅ Mot de passe modifié avec succès!';
-    messageDiv.style.backgroundColor = '#efe';
-    messageDiv.style.color = '#060';
-    messageDiv.style.display = 'block';
-
-    // Vider le champ
-    document.getElementById('newAdminPassword').value = '';
-
-    // Masquer le message après 3 secondes
-    setTimeout(() => {
-        messageDiv.style.display = 'none';
-    }, 3000);
-}
-
 // FONCTION: Déconnecter l'admin
-function logoutAdmin() {
-    isAdminLoggedIn = false;
+async function logoutAdmin() {
+    await supabase.auth.signOut();
+    adminUser = null;
     navigateTo('home');
 }
 
-// ========== SECTION ADMIN - FIN ==========
-s
+// ========== SECTION AD
