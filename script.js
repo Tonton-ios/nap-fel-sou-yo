@@ -23,31 +23,6 @@ function getSafeLocalStorage(key) {
     }
 }
 
-async function uploadToImgur(file) {
-  const formData = new FormData();
-  formData.append("image", file);
-
-  const response = await fetch("https://api.imgur.com/3/upload", {
-    method: "POST",
-    headers: {
-      Authorization: "Client-ID 1379bdfb7e6c93a"
-    },
-    body: formData
-  });
-
-  const data = await response.json();
-
-  if (!data.success) {
-    // La structure de l'erreur Imgur peut varier.
-    // On vérifie si data.data existe avant de l'utiliser.
-    const errorMessage = data.data?.error || JSON.stringify(data.data);
-    console.error("Réponse d'erreur Imgur:", data);
-    throw new Error(`Erreur lors de l'upload sur Imgur: ${errorMessage}`);
-  }
-
-  return data.data.link; // Lien direct de l’image
-}
-
 // Fonction pour sauvegarder les données du localStorage avec gestion d'erreur
 function setSafeLocalStorage(key, value) {
     try {
@@ -1378,77 +1353,49 @@ products.forEach(p => {
 });
 
 // --- Firebase helpers (optional) -------------------------------------------------
-function isFirebaseAvailable() {
-    return (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0 && firebase.firestore && firebase.storage);
+function isSupabaseAvailable() {
+    return (typeof supabase !== 'undefined');
 }
 
-async function uploadBase64ToFirebase(base64, storagePath) {
-    try {
-        const res = await fetch(base64);
-        const blob = await res.blob();
-        const storageRef = firebase.storage().ref().child(storagePath);
-        await storageRef.put(blob);
-        const url = await storageRef.getDownloadURL();
-        return url;
-    } catch (err) {
-        console.error('uploadBase64ToFirebase error:', err);
-        throw err;
+async function saveProductToSupabase(product) {
+    if (!isSupabaseAvailable()) throw new Error('Supabase not initialized');
+    const { data, error } = await supabase
+        .from('products')
+        .insert(product);
+
+    if (error) {
+        console.error('Erreur sauvegarde Supabase:', error);
+        throw error;
     }
+    return data;
 }
 
-async function saveProductToFirestore(product) {
-    if (!isFirebaseAvailable()) throw new Error('Firebase not initialized');
-    const docRef = firebase.firestore().collection('products').doc(product.id);
-    await docRef.set(product, { merge: true });
-    return true;
-}
+async function fetchProductsFromSupabase() {
+    if (!isSupabaseAvailable()) return [];
+    const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-async function fetchProductsFromFirestore() {
-    if (!isFirebaseAvailable()) return [];
-    const snapshot = await firebase.firestore().collection('products').get();
-    return snapshot.docs.map(d => d.data()).filter(Boolean);
-}
-
-async function migrateLocalToFirestore() {
-    if (!isFirebaseAvailable()) throw new Error('Firebase not initialized');
-    const local = JSON.parse(localStorage.getItem('customProducts') || '[]');
-    for (const p of local) {
-        try {
-            const docRef = firebase.firestore().collection('products').doc(p.id);
-            const doc = await docRef.get();
-            if (doc.exists) continue; // skip existing
-
-            const productCopy = Object.assign({}, p);
-            // If image is a data: URL, upload to Storage
-            if (productCopy.image && productCopy.image.startsWith('data:')) {
-                const ext = productCopy.image.substring(5, productCopy.image.indexOf(';')) || 'image/jpeg';
-                const filename = `products/${productCopy.id}.${ext.split('/').pop()}`;
-                try {
-                    const url = await uploadBase64ToFirebase(productCopy.image, filename);
-                    productCopy.image = url;
-                } catch (e) {
-                    console.warn('Failed to upload image for', productCopy.id, e);
-                }
-            }
-            await docRef.set(productCopy, { merge: true });
-        } catch (err) {
-            console.error('migrateLocalToFirestore error for product', p && p.id, err);
-        }
+    if (error) {
+        console.error('Erreur fetch Supabase:', error);
+        return [];
     }
+    return data;
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-    // If Firebase is initialized, try to load remote products first
-    if (isFirebaseAvailable()) {
+    // If Supabase is initialized, try to load remote products first
+    if (isSupabaseAvailable()) {
         try {
-            const remote = await fetchProductsFromFirestore();
+            const remote = await fetchProductsFromSupabase();
             if (Array.isArray(remote) && remote.length > 0) {
                 products.push(...remote);
-                console.log(`✅ ${remote.length} produit(s) chargé(s) depuis Firestore`);
+                console.log(`✅ ${remote.length} produit(s) chargé(s) depuis Supabase`);
             }
         } catch (e) {
-            console.error('Erreur lors du chargement depuis Firestore:', e);
+            console.error('Erreur lors du chargement depuis Supabase:', e);
         }
     }
     // Load custom products from localStorage with error handling
@@ -1527,7 +1474,7 @@ function navigateTo(page) {
             // Initialize Firebase admin form when admin page is rendered
             setTimeout(() => {
                 const adminForm = document.getElementById('adminProductForm');
-                if (adminForm) {
+                if (adminForm && typeof handleAddProductSubmit === 'function') {
                     adminForm.addEventListener('submit', handleAddProductSubmit);
                 }
             }, 100);
@@ -3168,12 +3115,12 @@ async function handleAddProductSubmit(event) {
     }
 
     // Vérifier si Firebase est disponible AVANT de commencer
-    if (!isFirebaseAvailable()) {
-        messageDiv.textContent = '❌ Erreur critique: Firebase n\'est pas chargé. Assurez-vous d\'utiliser un serveur local (ex: "Live Server" sur VS Code) et que votre connexion internet fonctionne.';
+    if (!isSupabaseAvailable()) {
+        messageDiv.textContent = '❌ Erreur critique: Supabase n\'est pas chargé. Assurez-vous d\'utiliser un serveur local (ex: "Live Server" sur VS Code) et que votre connexion internet fonctionne.';
         messageDiv.style.backgroundColor = '#fee2e2';
         messageDiv.style.color = '#991b1b';
         messageDiv.style.display = 'block';
-        console.error("Tentative d'ajout de produit sans Firebase. L'application est-elle bien servie par un serveur web ?");
+        console.error("Tentative d'ajout de produit sans Supabase. L'application est-elle bien servie par un serveur web ?");
         return;
     }
 
@@ -3187,29 +3134,25 @@ async function handleAddProductSubmit(event) {
         // Générer un ID unique pour le produit
         const newId = 'prod_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-        // Upload sur Firebase Storage avec suivi de la progression
+        // Upload sur Supabase Storage
         const fileExtension = file.name.split('.').pop();
         const storagePath = `products/${newId}.${fileExtension}`;
-        const storageRef = firebase.storage().ref().child(storagePath);
-        const uploadTask = storageRef.put(file);
-
+        
         progressContainer.style.display = 'block';
         const progressBar = document.getElementById('uploadProgressBar');
+        progressBar.style.width = '50%';
+        progressBar.textContent = '50%';
 
-        uploadTask.on('state_changed', 
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                progressBar.style.width = progress + '%';
-                progressBar.textContent = Math.round(progress) + '%';
-            }
-        );
+        const { data: uploadData, error: uploadError } = await supabase.storage.from('products').upload(storagePath, file);
+        if (uploadError) throw uploadError;
 
-        await uploadTask; // Attend la fin de l'upload
-        const imageUrl = await uploadTask.snapshot.ref.getDownloadURL();
+        const { data: urlData } = supabase.storage.from('products').getPublicUrl(storagePath);
+        const imageUrl = urlData.publicUrl;
 
         // Créer l'objet produit
+        // Note: Supabase gère `created_at` automatiquement.
+        // On ne spécifie pas l'ID, Supabase le génère.
         const newProduct = {
-            id: newId,
             name: name,
             price: price,
             category: category,
@@ -3217,8 +3160,11 @@ async function handleAddProductSubmit(event) {
             description: document.getElementById('productDesc').value.trim() || ''
         };
 
-        // Sauvegarder sur Firestore
-        await saveProductToFirestore(newProduct);
+        progressBar.style.width = '100%';
+        progressBar.textContent = '100%';
+
+        // Sauvegarder sur Supabase
+        await saveProductToSupabase(newProduct);
 
         // Ajouter à la liste locale pour affichage immédiat
         products.push(newProduct);
@@ -3452,3 +3398,4 @@ function logoutAdmin() {
 }
 
 // ========== SECTION ADMIN - FIN ==========
+s

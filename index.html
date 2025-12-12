@@ -107,33 +107,14 @@
             </div>
         </div>
     </footer>
-    <!-- Firebase Modules (using ES6 modules) -->
-    <script type="module">
-        // Import Firebase modules
-        import { db, storage } from './firebase.js';
-        import { loadProducts, watchProducts } from './shop.js';
-        import { initAdminForm } from './admin.js';
-
-        // Make functions globally available
-        window.loadProducts = loadProducts;
-        window.watchProducts = watchProducts;
-        window.initAdminForm = initAdminForm;
-        window.firebase_db = db;
-        window.firebase_storage = storage;
-
-        console.log('✅ Firebase modules chargés');
-    </script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Votre fichier de configuration Supabase -->
+    <script src="supabase-client.js"></script>
 
     <!-- Main Application Script -->
+    <!-- Ce script est chargé APRÈS Supabase, il aura donc accès à l'objet `supabase` -->
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
