@@ -2722,6 +2722,15 @@ function renderAdminDashboard() {
                     <p style="color: #666; margin-bottom: 2rem;">⭐ Les produits sont stockés sur Firebase et visibles partout!</p>
                     
                     <form id="adminProductForm">
+                        <!-- Barre de progression -->
+                        <div id="uploadProgressContainer" style="margin-bottom: 1rem; display: none;">
+                            <label>Progression de l'upload :</label>
+                            <div style="background-color: #e9ecef; border-radius: 0.25rem; overflow: hidden;">
+                                <div id="uploadProgressBar" style="width: 0%; height: 20px; background-color: #28a745; text-align: center; color: white; line-height: 20px; transition: width 0.3s ease;">
+                                    0%
+                                </div>
+                            </div>
+                        </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                             <div>
                                 <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit *</label>
@@ -3128,6 +3137,7 @@ async function handleAddProductSubmit(event) {
     const priceInput = document.getElementById('productPrice');
     const categoryInput = document.getElementById('productCategory');
     const imageFileInput = document.getElementById('productImage');
+    const progressContainer = document.getElementById('uploadProgressContainer');
     const messageDiv = document.getElementById('addProductMessage');
 
     if (!nameInput || !priceInput || !categoryInput || !imageFileInput || !messageDiv) {
@@ -3157,6 +3167,16 @@ async function handleAddProductSubmit(event) {
         return;
     }
 
+    // Vérifier si Firebase est disponible AVANT de commencer
+    if (!isFirebaseAvailable()) {
+        messageDiv.textContent = '❌ Erreur critique: Firebase n\'est pas chargé. Assurez-vous d\'utiliser un serveur local (ex: "Live Server" sur VS Code) et que votre connexion internet fonctionne.';
+        messageDiv.style.backgroundColor = '#fee2e2';
+        messageDiv.style.color = '#991b1b';
+        messageDiv.style.display = 'block';
+        console.error("Tentative d'ajout de produit sans Firebase. L'application est-elle bien servie par un serveur web ?");
+        return;
+    }
+
     // Afficher un message de chargement
     messageDiv.textContent = '⏳ Upload de l\'image et sauvegarde du produit...';
     messageDiv.style.backgroundColor = '#dbeafe';
@@ -3164,24 +3184,28 @@ async function handleAddProductSubmit(event) {
     messageDiv.style.display = 'block';
 
     try {
-        let imageUrl;
         // Générer un ID unique pour le produit
         const newId = 'prod_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-        if (isFirebaseAvailable()) {
-            // Upload sur Firebase Storage
-            const fileExtension = file.name.split('.').pop();
-            const storagePath = `products/${newId}.${fileExtension}`;
-            
-            const storageRef = firebase.storage().ref().child(storagePath);
-            await storageRef.put(file);
-            imageUrl = await storageRef.getDownloadURL();
-            
-        } else {
-            // Fallback sur Imgur si Firebase n'est pas dispo
-            console.warn("Firebase non disponible, upload vers Imgur.");
-            imageUrl = await uploadToImgur(file);
-        }
+        // Upload sur Firebase Storage avec suivi de la progression
+        const fileExtension = file.name.split('.').pop();
+        const storagePath = `products/${newId}.${fileExtension}`;
+        const storageRef = firebase.storage().ref().child(storagePath);
+        const uploadTask = storageRef.put(file);
+
+        progressContainer.style.display = 'block';
+        const progressBar = document.getElementById('uploadProgressBar');
+
+        uploadTask.on('state_changed', 
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = Math.round(progress) + '%';
+            }
+        );
+
+        await uploadTask; // Attend la fin de l'upload
+        const imageUrl = await uploadTask.snapshot.ref.getDownloadURL();
 
         // Créer l'objet produit
         const newProduct = {
@@ -3193,15 +3217,8 @@ async function handleAddProductSubmit(event) {
             description: document.getElementById('productDesc').value.trim() || ''
         };
 
-        if (isFirebaseAvailable()) {
-            // Sauvegarder sur Firestore
-            await saveProductToFirestore(newProduct);
-        } else {
-            // Fallback sur localStorage
-            let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
-            customProducts.push(newProduct);
-            setSafeLocalStorage('customProducts', customProducts);
-        }
+        // Sauvegarder sur Firestore
+        await saveProductToFirestore(newProduct);
 
         // Ajouter à la liste locale pour affichage immédiat
         products.push(newProduct);
@@ -3213,6 +3230,11 @@ async function handleAddProductSubmit(event) {
 
         // Vider le formulaire
         event.target.reset();
+        
+        // Cacher la barre de progression
+        setTimeout(() => {
+            progressContainer.style.display = 'none';
+        }, 2000);
 
     } catch (error) {
         console.error("Erreur lors de l'ajout du produit:", error);
