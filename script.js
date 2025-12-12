@@ -51,8 +51,8 @@ function setSafeLocalStorage(key, value) {
         const stringValue = JSON.stringify(value);
         const sizeMB = new Blob([stringValue]).size / 1024 / 1024;
         
-        // Augmenter la limite pour les images
-        if (sizeMB > 9) {
+        // Augmenter la limite pour les images compressées
+        if (sizeMB > 8) {
             console.warn(`Données volumineuses (${sizeMB.toFixed(2)}MB) pour ${key}`);
             return false;
         }
@@ -61,14 +61,21 @@ function setSafeLocalStorage(key, value) {
         return true;
     } catch (error) {
         if (error.name === 'QuotaExceededError') {
-            console.error(`localStorage plein pour ${key}`);
-            // Essayer de nettoyer les données
+            console.error(`localStorage plein pour ${key}. Taille: ${(new Blob([JSON.stringify(value)]).size / 1024 / 1024).toFixed(2)}MB`);
+            
             if (key === 'customProducts') {
-                // Garder seulement les 5 derniers produits pour faire de la place
+                // Garder seulement les 3 derniers produits
                 const data = JSON.parse(localStorage.getItem(key) || '[]');
-                if (Array.isArray(data) && data.length > 5) {
-                    localStorage.setItem(key, JSON.stringify(data.slice(-5)));
-                    return false;
+                if (Array.isArray(data) && data.length > 3) {
+                    const newData = data.slice(-3);
+                    try {
+                        localStorage.setItem(key, JSON.stringify(newData));
+                        console.log(`✅ Gardé les 3 derniers produits`);
+                        return true;
+                    } catch (e) {
+                        console.error('Impossible même avec 3 produits');
+                        return false;
+                    }
                 }
             }
         } else {
@@ -2932,47 +2939,97 @@ document.addEventListener('change', (e) => {
             const imageInput = document.getElementById('productImage');
             const previewImg = document.getElementById('previewImg');
             const imagePreview = document.getElementById('imagePreview');
+            const messageDiv = document.getElementById('addProductMessage');
             
             if (!imageInput || !previewImg || !imagePreview) return;
             
-            // Convertir l'image en base64 avec compression
+            // Compresser l'image
             const reader = new FileReader();
             reader.onload = (event) => {
-                const base64String = event.target.result;
-                
-                // Si l'image est trop grande, la compresser
-                if (base64String.length > 500000) {
-                    // Compresser via canvas
-                    const img = new Image();
-                    img.src = base64String;
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = async function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Réduire la taille
+                    const maxWidth = 800;
+                    const maxHeight = 600;
+                    
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d', { alpha: false });
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Compresser
+                    let quality = 0.7;
+                    let compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    
+                    while (compressedBase64.length > 300000 && quality > 0.3) {
+                        quality -= 0.1;
+                        compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    }
+                    
+                    // Afficher l'aperçu
+                    previewImg.src = compressedBase64;
+                    imagePreview.style.display = 'block';
+                    
+                    // Upload vers imgbb (API gratuite)
+                    if (messageDiv) {
+                        messageDiv.textContent = '⏳ Upload de l\'image...';
+                        messageDiv.style.backgroundColor = '#dbeafe';
+                        messageDiv.style.color = '#1e40af';
+                        messageDiv.style.display = 'block';
+                    }
+                    
+                    try {
+                        const formData = new FormData();
+                        formData.append('image', compressedBase64.split(',')[1]);
+                        formData.append('key', '9c1bad1849c63cba25f86c0a87c22ed7');
                         
-                        // Réduire la taille si image trop grande
-                        if (width > 1200) {
-                            height = Math.round((height * 1200) / width);
-                            width = 1200;
+                        const response = await fetch('https://api.imgbb.com/1/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            const imageUrl = data.data.url;
+                            imageInput.value = imageUrl;
+                            imageInput.setAttribute('data-firebase-url', imageUrl);
+                            previewImg.src = imageUrl;
+                            
+                            if (messageDiv) {
+                                messageDiv.textContent = '✅ Image uploadée!';
+                                messageDiv.style.backgroundColor = '#d1fae5';
+                                messageDiv.style.color = '#065f46';
+                                setTimeout(() => messageDiv.style.display = 'none', 2000);
+                            }
+                        } else {
+                            throw new Error('Upload failed');
                         }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    } catch (error) {
+                        console.error('Erreur upload:', error);
+                        // Fallback: garder le base64
                         imageInput.value = compressedBase64;
                         imageInput.setAttribute('data-base64', compressedBase64);
-                        previewImg.src = compressedBase64;
-                        imagePreview.style.display = 'block';
-                    };
-                } else {
-                    imageInput.value = base64String;
-                    imageInput.setAttribute('data-base64', base64String);
-                    previewImg.src = base64String;
-                    imagePreview.style.display = 'block';
-                }
+                        
+                        if (messageDiv) {
+                            messageDiv.textContent = '✅ Image prête (stockage local)';
+                            messageDiv.style.backgroundColor = '#dbeafe';
+                            messageDiv.style.color = '#1e40af';
+                            setTimeout(() => messageDiv.style.display = 'none', 2000);
+                        }
+                    }
+                };
             };
             reader.readAsDataURL(file);
         }
@@ -3052,6 +3109,14 @@ function addNewProduct() {
         messageDiv.style.color = '#c00';
         messageDiv.style.display = 'block';
         return;
+    }
+    
+    // Vérifier que le produit a été sauvegardé
+    try {
+        const saved = JSON.parse(localStorage.getItem('customProducts') || '[]');
+        console.log(`💾 ${saved.length} produit(s) sauvegardé(s)`);
+    } catch (e) {
+        console.error('Erreur de sauvegarde');
     }
 
     // Ajouter à l'array products pour affichage immédiat
