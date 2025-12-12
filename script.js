@@ -1374,8 +1374,80 @@ products.forEach(p => {
     }
 });
 
+// --- Firebase helpers (optional) -------------------------------------------------
+function isFirebaseAvailable() {
+    return (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0 && firebase.firestore && firebase.storage);
+}
+
+async function uploadBase64ToFirebase(base64, storagePath) {
+    try {
+        const res = await fetch(base64);
+        const blob = await res.blob();
+        const storageRef = firebase.storage().ref().child(storagePath);
+        await storageRef.put(blob);
+        const url = await storageRef.getDownloadURL();
+        return url;
+    } catch (err) {
+        console.error('uploadBase64ToFirebase error:', err);
+        throw err;
+    }
+}
+
+async function saveProductToFirestore(product) {
+    if (!isFirebaseAvailable()) throw new Error('Firebase not initialized');
+    const docRef = firebase.firestore().collection('products').doc(product.id);
+    await docRef.set(product, { merge: true });
+    return true;
+}
+
+async function fetchProductsFromFirestore() {
+    if (!isFirebaseAvailable()) return [];
+    const snapshot = await firebase.firestore().collection('products').get();
+    return snapshot.docs.map(d => d.data()).filter(Boolean);
+}
+
+async function migrateLocalToFirestore() {
+    if (!isFirebaseAvailable()) throw new Error('Firebase not initialized');
+    const local = JSON.parse(localStorage.getItem('customProducts') || '[]');
+    for (const p of local) {
+        try {
+            const docRef = firebase.firestore().collection('products').doc(p.id);
+            const doc = await docRef.get();
+            if (doc.exists) continue; // skip existing
+
+            const productCopy = Object.assign({}, p);
+            // If image is a data: URL, upload to Storage
+            if (productCopy.image && productCopy.image.startsWith('data:')) {
+                const ext = productCopy.image.substring(5, productCopy.image.indexOf(';')) || 'image/jpeg';
+                const filename = `products/${productCopy.id}.${ext.split('/').pop()}`;
+                try {
+                    const url = await uploadBase64ToFirebase(productCopy.image, filename);
+                    productCopy.image = url;
+                } catch (e) {
+                    console.warn('Failed to upload image for', productCopy.id, e);
+                }
+            }
+            await docRef.set(productCopy, { merge: true });
+        } catch (err) {
+            console.error('migrateLocalToFirestore error for product', p && p.id, err);
+        }
+    }
+}
+
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // If Firebase is initialized, try to load remote products first
+    if (isFirebaseAvailable()) {
+        try {
+            const remote = await fetchProductsFromFirestore();
+            if (Array.isArray(remote) && remote.length > 0) {
+                products.push(...remote);
+                console.log(`✅ ${remote.length} produit(s) chargé(s) depuis Firestore`);
+            }
+        } catch (e) {
+            console.error('Erreur lors du chargement depuis Firestore:', e);
+        }
+    }
     // Load custom products from localStorage with error handling
     try {
         let customProducts = JSON.parse(localStorage.getItem('customProducts')) || [];
@@ -1449,6 +1521,12 @@ function navigateTo(page) {
             break;
         case 'admin':
             mainContent.innerHTML = renderAdminDashboard();
+            // Initialize Firebase admin form when admin page is rendered
+            setTimeout(() => {
+                if (typeof window.initAdminForm === 'function') {
+                    window.initAdminForm();
+                }
+            }, 100);
             break;
     }
     
@@ -2634,89 +2712,91 @@ function renderAdminDashboard() {
                     </button>
                 </div>
 
-                <!-- Onglet 1: Ajouter un produit -->
+                <!-- Onglet 1: Ajouter un produit via Firebase -->
                 <div id="adminTabAdd" style="background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <h2 style="color: #333; margin-top: 0;">Ajouter un nouveau produit</h2>
+                    <p style="color: #666; margin-bottom: 2rem;">⭐ Les produits sont stockés sur Firebase et visibles partout!</p>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit</label>
-                            <input 
-                                type="text" 
-                                id="productName"
-                                placeholder="Ex: Jus Orange"
+                    <form id="adminProductForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Nom du produit *</label>
+                                <input 
+                                    type="text" 
+                                    id="productName"
+                                    placeholder="Ex: Jus Orange"
+                                    required
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS) *</label>
+                                <input 
+                                    type="number" 
+                                    id="productPrice"
+                                    placeholder="Ex: 150"
+                                    required
+                                    min="0"
+                                    step="0.01"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                                >
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie *</label>
+                            <select 
+                                id="productCategory"
+                                required
                                 style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
                             >
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="alimentaires">Produits alimentaires</option>
+                                <option value="glaces">Produits glacés</option>
+                                <option value="menagers">Produits ménagers</option>
+                                <option value="cosmetiques">Cosmétiques</option>
+                                <option value="parfums">Parfums</option>
+                                <option value="bijoux">Bijoux</option>
+                                <option value="cartes">Cartes de vœux</option>
+                                <option value="hygiene">Hygiène</option>
+                                <option value="maji">Maji</option>
+                                <option value="alcools">Alcools</option>
+                                <option value="paniers">Paniers cadeaux</option>
+                                <option value="tabac">Cigares / Cigarettes / Chicha</option>
+                                <option value="insecticides">Insecticides</option>
+                            </select>
                         </div>
-                        
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Prix (GDS)</label>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Description (optionnel)</label>
+                            <textarea 
+                                id="productDesc"
+                                placeholder="Description brève du produit..."
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box; min-height: 100px; font-family: inherit;"
+                            ></textarea>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Image du produit *</label>
                             <input 
-                                type="number" 
-                                id="productPrice"
-                                placeholder="Ex: 150"
+                                type="file" 
+                                id="productImage"
+                                accept="image/*"
+                                required
                                 style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
                             >
+                            <small style="color: #666; display: block; margin-top: 0.5rem;">✅ L'image sera automatiquement uploadée sur Firebase Storage</small>
                         </div>
-                    </div>
 
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Catégorie</label>
-                        <select 
-                            id="productCategory"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
+                        <button 
+                            type="submit"
+                            class="btn btn-primary" 
+                            style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500; font-size: 1rem;"
                         >
-                            <option value="">Sélectionner une catégorie</option>
-                            <option value="alimentaires">Produits alimentaires</option>
-                            <option value="glaces">Produits glacés</option>
-                            <option value="menagers">Produits ménagers</option>
-                            <option value="cosmetiques">Cosmétiques</option>
-                            <option value="parfums">Parfums</option>
-                            <option value="bijoux">Bijoux</option>
-                            <option value="cartes">Cartes de vœux</option>
-                            <option value="hygiene">Hygiène</option>
-                            <option value="maji">Maji</option>
-                            <option value="alcools">Alcools</option>
-                            <option value="paniers">Paniers cadeaux</option>
-                            <option value="tabac">Cigares / Cigarettes / Chicha</option>
-                            <option value="insecticides">Insecticides</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">URL de l'image (ou laisser vide)</label>
-                        <input 
-                            type="text" 
-                            id="productImage"
-                            placeholder="Ex: https://i.imgur.com/abcd123.jpg"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                        >
-                        <small style="color: #666; display: block; margin-top: 0.5rem;">Astuce: hébergez l'image sur Imgur puis collez le lien ici pour qu'elle soit visible partout.</small>
-                    </div>
-
-                    <div style="margin-bottom: 2rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500;">Ou charger une image</label>
-                        <input 
-                            type="file" 
-                            id="productImageFile"
-                            accept="image/*"
-                            style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 0.25rem; box-sizing: border-box;"
-                        >
-                        <small style="color: #666; display: block; margin-top: 0.5rem;">Note: Sélectionnez une image depuis votre ordinateur ou téléphone (JPG, PNG, GIF, WebP)</small>
-                    </div>
-
-                    <div id="imagePreview" style="margin-bottom: 1rem; display: none;">
-                        <p style="color: #333; font-weight: 500; margin-bottom: 0.5rem;">Aperçu:</p>
-                        <img id="previewImg" src="" alt="Aperçu" style="max-width: 200px; border-radius: 0.25rem;">
-                    </div>
-
-                    <button 
-                        class="btn btn-primary" 
-                        onclick="addNewProduct()"
-                        style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; background-color: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 500;"
-                    >
-                        Ajouter le produit
-                    </button>
+                            Ajouter le produit
+                        </button>
+                    </form>
 
                     <div id="addProductMessage" style="padding: 0.75rem; border-radius: 0.25rem; display: none; font-weight: 500;"></div>
                 </div>
@@ -3375,7 +3455,3 @@ function logoutAdmin() {
 }
 
 // ========== SECTION ADMIN - FIN ==========
-
-
-
-    
