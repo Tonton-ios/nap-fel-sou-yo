@@ -1675,14 +1675,14 @@ function renderProductsList(allProducts) {
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <button 
                             class="btn" 
-                            onclick="editProduct('${product.id}'); switchAdminTab('edit');"
+                            onclick="populateEditForm(${product.id})"
                             style="padding: 0.5rem 1rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;"
                         >
                             Modifier
                         </button>
                         <button 
                             class="btn" 
-                            onclick="deleteProduct('${product.id}')"
+                            onclick="deleteProduct(${product.id})"
                             style="padding: 0.5rem 1rem; background-color: #ef4444; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;"
                         >
                             Supprimer
@@ -1935,12 +1935,6 @@ async function deleteProduct(productId) {
         // Supprimer de Supabase
         await deleteProductFromSupabase(productId);
 
-        // Supprimer de la liste locale
-        const index = products.findIndex(p => p.id === productId);
-        if (index > -1) {
-            products.splice(index, 1);
-        }
-
         // Rafraîchir la liste affichée
         const listContainer = document.getElementById('productsListContainer');
         if (listContainer) {
@@ -1948,28 +1942,18 @@ async function deleteProduct(productId) {
         }
 
         alert('Produit supprimé avec succès !');
+        
+        // NOTE: La suppression de la liste locale `products` est maintenant
+        // gérée automatiquement par la souscription en temps réel (realtime)
+        // que nous avons mise en place. Quand Supabase confirme la suppression,
+        // il envoie un événement 'DELETE' qui est capturé par `subscribeToProductChanges`,
+        // et c'est cette fonction qui met à jour la liste `products`.
+        // Cela évite les incohérences.
 
     } catch (error) {
         console.error("Erreur lors de la suppression du produit:", error);
         alert(`❌ Erreur lors de la suppression: ${error.message}`);
     }
-}
-
-// FONCTION: Déconnecter l'admin
-async function logoutAdmin() {
-    await supabase.auth.signOut();
-    adminUser = null;
-    navigateTo('home');
-}
-
-// FONCTION: Remplir le formulaire d'édition (remplace l'ancienne fonction `populateEditForm`)
-function editProduct(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    // Sauvegarder l'ID du produit en cours d'édition
-    editingProductId = productId;
-    populateEditForm(product);
 }
 
 // FONCTION: Vérifier la session admin au chargement
