@@ -476,17 +476,19 @@ function attachProductsPageListeners() {
 // Product Card Component
 function renderProductCard(product) {
     // Gérer les images - support base64 et URLs
-    let imageUrl = product.image || 'https://via.placeholder.com/400';
+    const placeholder = 'https://via.placeholder.com/400x400.png?text=Image+Indisponible';
+    let imageUrl = product.image || placeholder;
     
-    // Si c'est du base64 trop long, utiliser une image placeholder
-    if (imageUrl.startsWith('data:') && imageUrl.length > 800000) {
-        imageUrl = 'https://via.placeholder.com/400';
+    // Si l'URL est invalide (ancienne URL unsplash ou locale), utiliser une image placeholder
+    // Cela évite les erreurs 404 dans la console.
+    if (!imageUrl.startsWith('https') || imageUrl.includes('source.unsplash.com')) {
+        imageUrl = placeholder;
     }
     
     return `
         <div class="product-card">
             <div class="product-image">
-                <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400';">
+                <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.onerror=null; this.src='${placeholder}';">
             </div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
