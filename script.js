@@ -221,8 +221,10 @@ function subscribeToProductChanges() {
 subscribeToProductChanges();
 
 // Navigation
-function navigateTo(page) {
+async function navigateTo(page) { // Rendre la fonction asynchrone
     currentPage = page;
+    // Si on va sur la page admin et que l'utilisateur n'est pas déjà connu, on vérifie la session.
+    if (page === 'admin' && !adminUser) await checkAdminSession();
     
     // Update active nav link
     document.querySelectorAll('.nav-link').forEach(link => {
@@ -244,6 +246,10 @@ function navigateTo(page) {
             attachProductsPageListeners();
             break;
         case 'about':
+            // On s'assure que le bouton "edit" est caché si on quitte la page admin
+            const editTabButton = document.querySelector(`.admin-tab-btn[onclick*="'edit'"]`);
+            if (editTabButton) editTabButton.style.display = 'none';
+
             mainContent.innerHTML = renderAboutPage();
             break;
         case 'contact':
@@ -1954,6 +1960,26 @@ async function logoutAdmin() {
     await supabase.auth.signOut();
     adminUser = null;
     navigateTo('home');
+}
+
+// FONCTION: Remplir le formulaire d'édition (remplace l'ancienne fonction `populateEditForm`)
+function editProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Sauvegarder l'ID du produit en cours d'édition
+    editingProductId = productId;
+    populateEditForm(product);
+}
+
+// FONCTION: Vérifier la session admin au chargement
+async function checkAdminSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        adminUser = session.user;
+    } else {
+        adminUser = null;
+    }
 }
 
 // ========== SECTION AD
